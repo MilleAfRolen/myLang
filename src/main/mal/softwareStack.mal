@@ -23,9 +23,9 @@ category softwareStack {
 
   asset WebServer {
     | postRequest
-      -> 
+      -> interpreter.post
     | getRequest
-      -> 
+      -> interpreter.get
   }
 
   asset Dbms {

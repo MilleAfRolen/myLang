@@ -13,44 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#id: "LAMPStack"
-#version: "1.0.0"
+include "softwareStack.mal"
 
 category System {
-  asset Linux {
-    | os
-      -> 
+  asset Linux extends OperativeSystem {
+
   }
-
-
 
   asset Apache extends WebServer {
 
   }
 
-  asset MySQL {
-    | insert
-      -> database.edit
-    | fetch
-      -> database.get
+  asset MySQL extends Dbms{
+
   }
 
-  asset Database {
-    | edit
-    | get
-  }
+  asset PHP extends Interpreter {
 
-  asset PHP {
-    | post
-      -> sql.insert
-    | get
-      -> sql.fetch
   }
 }
 
 associations {
   Linux [linux] 1 <-- runs --> 1 [apache] Apache
-  WebServer [webserver] 1 <-- executes --> * [php] PHP
+  Apache [apache] 1 <-- executes --> * [php] PHP
   PHP [php] 1 <-- uses --> * [sql] MySQL
   MySQL [sql] 1 <-- queries --> * [database] Database
 
