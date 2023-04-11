@@ -18,14 +18,28 @@
 
 category softwareStack {
   asset OperativeSystem {
-    | coreLang //?
+    |coreLang
+    -> info.read,
+    info.write,
+    info.delete
+
+  }
+
+
+  asset info{
+    |read
+    -> database.get
+    |write 
+    ->database.edit
+    |delete
+    ->databse.delete
   }
 
   asset WebServer {
     | postRequest
-      -> interpreter.post
+      -> 
     | getRequest
-      -> interpreter.get
+      -> 
   }
 
   asset Dbms {
@@ -38,6 +52,7 @@ category softwareStack {
   asset Database {
     | edit
     | get
+    |delete
   }
 
   asset Interpreter {
