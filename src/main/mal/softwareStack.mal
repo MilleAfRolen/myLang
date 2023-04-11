@@ -18,21 +18,20 @@
 
 category softwareStack {
   asset OperativeSystem {
-    |coreLang
-    -> info.read,
-    info.write,
-    info.delete
-
+    | coreLang
+    -> information.read,
+    information.write,
+    information.delete
   }
 
 
-  asset info{
-    |read
-    -> database.get
-    |write 
-    ->database.edit
+  asset Info {
+    | read
+      -> database.get
+    | write 
+      -> database.edit
     |delete
-    ->databse.delete
+      -> database.delete
   }
 
   asset WebServer {
@@ -65,8 +64,10 @@ category softwareStack {
 
 associations {
   OperativeSystem [os] 1 <-- runs --> 1 [webserver] WebServer
+  OperativeSystem [os] 1 <-- blabla --> 1 [information] Info
   WebServer [webserver] 1 <-- executes --> * [interpreter] Interpreter
   Interpreter [interpreter] 1 <-- uses --> * [dbms] Dbms
   Dbms [dbms] 1 <-- queries --> * [database] Database
+  Info [information] 1 <-- blablabla --> 1 [database] Database
 
 }

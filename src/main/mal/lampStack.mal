@@ -37,6 +37,6 @@ associations {
   Linux [linux] 1 <-- runs --> 1 [apache] Apache
   Apache [apache] 1 <-- executes --> * [php] PHP
   PHP [php] 1 <-- uses --> * [sql] MySQL
-  MySQL [sql] 1 <-- queries --> * [database] Database
+  MySQL [sql] 1 <-- queries --> * [pp] Database
 
 }
