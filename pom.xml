@@ -18,14 +18,14 @@ limitations under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.mal-lang</groupId>
-  <artifactId>examplelang</artifactId>
+  <artifactId>webLang</artifactId>
   <version>1.0.0</version>
   <packaging>jar</packaging>
 
-  <name>exampleLang</name>
+  <name>webLang</name>
   <description>A MAL language that demonstrates the Maven project structure</description>
-  <url>https://github.com/mal-lang/exampleLang</url>
-  <inceptionYear>2020</inceptionYear>
+  <url>https://github.com/milleafrolen/myLang</url>
+  <inceptionYear>2023</inceptionYear>
   <organization>
     <name>MAL</name>
     <url>https://mal-lang.org</url>
@@ -39,6 +39,7 @@ limitations under the License.
   </licenses>
 
   <developers>
+  <!--
     <developer>
       <id>maxwalls</id>
       <name>Max Wällstedt</name>
@@ -54,6 +55,7 @@ limitations under the License.
         <picUrl>https://www.gravatar.com/avatar/f32021f9158fb3e2fc06414d056f46ec?size=64</picUrl>
       </properties>
     </developer>
+    -->
   </developers>
 
   <scm>

@@ -14,13 +14,31 @@
  * limitations under the License.
  */
 
- category user {
+
+ category User {
 
   asset User {
-    | Phisising
-      -> 
-  
+    | Phishing
+      -> userCredentials.Compromise
+    | RequestAccess
   }
 
+ }
+
+category Credentials {
+
+  asset UserCredentials {
+    | Compromise
+      -> user.RequestAccess
+  }
+
+  asset AdminCredentials {
+    
+  }
+
+ }
+
+associations {
+  UserCredentials [userCredentials] 1 <-- userCrendentials --> 1 [user] User
 
  }

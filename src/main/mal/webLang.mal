@@ -14,15 +14,6 @@
  * limitations under the License.
  */
 
- category credentials {
 
-  asset UserCredentials {
-  
-  }
-
-  asset AdminCredentials {
-    
-  }
-
-
- }
+include "SoftwareStack.mal"
+include "User.mal"

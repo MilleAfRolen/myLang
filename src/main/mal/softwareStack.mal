@@ -13,61 +13,99 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#id: "LAMPStack"
-#version: "1.0.0"
 
 category softwareStack {
-  asset OperativeSystem {
-    | coreLang
+  
+  abstract asset OperativeSystem {
+    | doStuff
     -> information.read,
     information.write,
     information.delete
   }
 
 
-  asset Info {
+  abstract asset Information 
+      user info: "Represents any information that could be stored inside data"
+  {
     | read
-      -> database.get
     | write 
-      -> database.edit
-    |delete
+    | delete
+    | deny
+    | extract
+  }
+
+  abstract asset WebServer {
+    | connect
+    | authenticate
+      -> user.
+    | getRequest
+      -> handleRequest,
+         interpreter.get
+    | handleRequest
+      -> interpreter.processRequest
+
+  }
+
+  abstract asset Dbms {
+    | insert
+      -> database.insert
+    | fetch
+      -> database.fetch
+    | update
+      -> database.update
+    | delete
       -> database.delete
   }
 
-  asset WebServer {
-    | postRequest
-      -> 
-    | getRequest
-      -> 
-  }
-
-  asset Dbms {
+  abstract asset Database {
     | insert
-      -> database.edit
     | fetch
-      -> database.get
+    | update
+    | delete
   }
 
-  asset Database {
-    | edit
+  abstract asset Interpreter {
     | get
-    |delete
-  }
+      -> correctRequest
 
-  asset Interpreter {
-    | post
-      -> dbms.insert
-    | get
-      -> dbms.fetch
+    | processRequest
+      -> dbms
+    | correctRequest
+      -> dbms.request
+
+    | error
   }
 }
 
+category LampStack {
+  asset Linux extends OperativeSystem {
+
+  }
+
+  asset Apache extends WebServer {
+
+  }
+
+  asset MySQL extends Dbms{
+
+  }
+
+  asset PHP extends Interpreter {
+
+  }
+}
+
+category Resources {
+    asset protectedResource extends Information {
+
+    }
+}
+
+
 associations {
   OperativeSystem [os] 1 <-- runs --> 1 [webserver] WebServer
-  OperativeSystem [os] 1 <-- blabla --> 1 [information] Info
+  OperativeSystem [os] 1 <-- blabla --> 1 [information] Information
   WebServer [webserver] 1 <-- executes --> * [interpreter] Interpreter
   Interpreter [interpreter] 1 <-- uses --> * [dbms] Dbms
   Dbms [dbms] 1 <-- queries --> * [database] Database
-  Info [information] 1 <-- blablabla --> 1 [database] Database
-
 }
