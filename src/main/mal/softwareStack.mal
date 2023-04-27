@@ -39,8 +39,7 @@ category softwareStack {
     | authenticate
       -> user.
     | getRequest
-      -> handleRequest,
-         interpreter.get
+      -> authenticate
     | handleRequest
       -> interpreter.processRequest
 
@@ -65,8 +64,12 @@ category softwareStack {
   }
 
   abstract asset Interpreter {
-    | get
-      -> correctRequest
+    | getRequest
+      -> validateRequest
+
+    | validateRequest
+
+
 
     | processRequest
       -> dbms
@@ -77,6 +80,7 @@ category softwareStack {
   }
 }
 
+//Behövs denna ens?
 category LampStack {
   asset Linux extends OperativeSystem {
 
