@@ -1,6 +1,133 @@
-
-
 #id: "org.mal-lang.webLang"
 #version: "1.0.0"
 
-include "webLang.mal"
+/*
+ * Copyright 2020-2022 Foreseeti AB <https://foreseeti.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+category softwareStack {
+  
+  //funkar information ? vad ska man ta från coreLang?
+  asset OperativeSystem {
+    | backdoorAccess
+  }
+
+    //behöver requests valideras av Webservern? Behöver Users som skickar requests authenticata sig själva? 
+  asset WebServer {
+    | connect
+      -> access
+    | authenticateUser
+      -> interpreter.getRequest
+    & access
+      -> resource.access
+  }
+
+  asset WebPage {
+    | attemptLogin
+      -> webserver.connect,
+         webserver.authenticateUser
+    | brokenAccessControlAttack
+      -> resource.access
+  }
+
+  asset Dbms {
+    | insert
+      -> database.insert
+    | fetch
+      -> database.fetch
+    | update
+      -> database.update
+    | delete
+      -> database.delete
+  }
+
+  asset Database {
+    | insert
+    | fetch
+      -> userCredentials.access
+    | update
+    | delete
+  }
+
+  asset Interpreter {
+    | postRequest
+      -> dbms.insert
+    | getRequest
+      -> dbms.fetch
+    | putRequest
+      -> dbms.update
+    | deleteRequest
+      -> dbms.delete
+  }
+}
+
+
+category Resources {
+
+  asset protectedResource {
+    | access
+    | deny
+  }
+}
+
+ category User {
+  //
+  asset User {
+    | phishing
+      -> userAccount.compromise
+    | loginRequest
+      -> webpage.attemptLogin
+  }
+
+  asset UserAccount {
+    //connect to the account
+    | connect
+      -> compromise
+    | authenticate
+      -> compromise
+    & compromise
+      -> userCredentials.compromise
+  }
+
+ }
+
+category Credentials {
+
+  asset UserCredentials {
+    | compromise
+      -> webserver.access
+    | access
+      -> webserver.access
+  }
+ }
+
+
+
+associations {
+  OperativeSystem [os] 1 <-- runs --> 1 [webserver] WebServer
+  WebServer [webserver] 1 <-- executes --> * [interpreter] Interpreter
+  Interpreter [interpreter] 1 <-- uses --> * [dbms] Dbms
+  Dbms [dbms] 1 <-- queries --> * [database] Database
+  UserCredentials [userCredentials] 1 <-- authenticates --> 1 [userAccount] UserAccount
+  WebServer [webserver] 1 <-- hosts --> * [userAccount] UserAccount
+  UserCredentials [userCredentials] 1 <-- authenticates --> 1 [webserver] WebServer
+  User [user] 1 <-- has --> * [userAccount] UserAccount
+  Database [database] 1 <-- stores --> * [userCredentials] UserCredentials
+  WebServer [webserver] 1 <-- responses --> 1 [webpage] WebPage
+  WebServer [webserver] 1 <-- giveAccess --> * [resource] protectedResource
+  WebPage [webpage] 1 <-- access --> * [resource] protectedResource
+  User [user] * <-- interacts --> 1 [webpage] WebPage
+}

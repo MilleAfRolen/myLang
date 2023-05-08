@@ -1,0 +1,8 @@
+-------------------------------------------------------------------------------
+Test set: org.mal_lang.webLang.TestWebLang
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.001 s <<< FAILURE! - in org.mal_lang.webLang.TestWebLang
+org.mal_lang.webLang.TestWebLang  Time elapsed: 0.001 s  <<< ERROR!
+java.lang.NoClassDefFoundError: User
+Caused by: java.lang.ClassNotFoundException: User
+
