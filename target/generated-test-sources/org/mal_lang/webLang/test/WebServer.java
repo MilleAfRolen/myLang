@@ -9,22 +9,26 @@ import java.lang.String;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class WebServer extends Asset {
+public class WebServer extends Asset {
   public Connect connect;
 
   public AuthenticateUser authenticateUser;
+
+  public SendMaliciousRequest sendMaliciousRequest;
+
+  public AccessServerScripts accessServerScripts;
 
   public Access access;
 
   public OperativeSystem os = null;
 
-  public Set<Interpreter> interpreter = new HashSet<>();
+  public Set<LanguageRuntime> runtime = new HashSet<>();
 
-  public Set<UserAccount> userAccount = new HashSet<>();
+  public Set<WebPage> webpage = new HashSet<>();
 
-  public UserCredentials userCredentials = null;
+  public Set<ProtectedResource> resource = new HashSet<>();
 
-  public WebPage webpage = null;
+  public Set<WebResource> webResource = new HashSet<>();
 
   public WebServer(String name) {
     super(name);
@@ -33,6 +37,10 @@ public abstract class WebServer extends Asset {
     connect = new Connect(name);
     AttackStep.allAttackSteps.remove(authenticateUser);
     authenticateUser = new AuthenticateUser(name);
+    AttackStep.allAttackSteps.remove(sendMaliciousRequest);
+    sendMaliciousRequest = new SendMaliciousRequest(name);
+    AttackStep.allAttackSteps.remove(accessServerScripts);
+    accessServerScripts = new AccessServerScripts(name);
     AttackStep.allAttackSteps.remove(access);
     access = new Access(name);
   }
@@ -46,38 +54,38 @@ public abstract class WebServer extends Asset {
     os.webserver = this;
   }
 
-  public void addInterpreter(Interpreter interpreter) {
-    this.interpreter.add(interpreter);
-    interpreter.webserver = this;
-  }
-
-  public void addUserAccount(UserAccount userAccount) {
-    this.userAccount.add(userAccount);
-    userAccount.webserver = this;
-  }
-
-  public void addUserCredentials(UserCredentials userCredentials) {
-    this.userCredentials = userCredentials;
-    userCredentials.webserver = this;
+  public void addRuntime(LanguageRuntime runtime) {
+    this.runtime.add(runtime);
+    runtime.webserver = this;
   }
 
   public void addWebpage(WebPage webpage) {
-    this.webpage = webpage;
+    this.webpage.add(webpage);
     webpage.webserver = this;
+  }
+
+  public void addResource(ProtectedResource resource) {
+    this.resource.add(resource);
+    resource.webserver = this;
+  }
+
+  public void addWebResource(WebResource webResource) {
+    this.webResource.add(webResource);
+    webResource.server = this;
   }
 
   @Override
   public String getAssociatedAssetClassName(String field) {
     if (field.equals("os")) {
       return OperativeSystem.class.getName();
-    } else if (field.equals("interpreter")) {
-      return Interpreter.class.getName();
-    } else if (field.equals("userAccount")) {
-      return UserAccount.class.getName();
-    } else if (field.equals("userCredentials")) {
-      return UserCredentials.class.getName();
+    } else if (field.equals("runtime")) {
+      return LanguageRuntime.class.getName();
     } else if (field.equals("webpage")) {
       return WebPage.class.getName();
+    } else if (field.equals("resource")) {
+      return ProtectedResource.class.getName();
+    } else if (field.equals("webResource")) {
+      return WebResource.class.getName();
     }
     return "";
   }
@@ -89,18 +97,14 @@ public abstract class WebServer extends Asset {
       if (os != null) {
         assets.add(os);
       }
-    } else if (field.equals("interpreter")) {
-      assets.addAll(interpreter);
-    } else if (field.equals("userAccount")) {
-      assets.addAll(userAccount);
-    } else if (field.equals("userCredentials")) {
-      if (userCredentials != null) {
-        assets.add(userCredentials);
-      }
+    } else if (field.equals("runtime")) {
+      assets.addAll(runtime);
     } else if (field.equals("webpage")) {
-      if (webpage != null) {
-        assets.add(webpage);
-      }
+      assets.addAll(webpage);
+    } else if (field.equals("resource")) {
+      assets.addAll(resource);
+    } else if (field.equals("webResource")) {
+      assets.addAll(webResource);
     }
     return assets;
   }
@@ -111,21 +115,15 @@ public abstract class WebServer extends Asset {
     if (os != null) {
       assets.add(os);
     }
-    assets.addAll(interpreter);
-    assets.addAll(userAccount);
-    if (userCredentials != null) {
-      assets.add(userCredentials);
-    }
-    if (webpage != null) {
-      assets.add(webpage);
-    }
+    assets.addAll(runtime);
+    assets.addAll(webpage);
+    assets.addAll(resource);
+    assets.addAll(webResource);
     return assets;
   }
 
   public class Connect extends AttackStepMin {
     private Set<AttackStep> _cacheChildrenConnect;
-
-    private Set<AttackStep> _cacheParentConnect;
 
     public Connect(String name) {
       super(name);
@@ -135,24 +133,12 @@ public abstract class WebServer extends Asset {
     public void updateChildren(Set<AttackStep> attackSteps) {
       if (_cacheChildrenConnect == null) {
         _cacheChildrenConnect = new HashSet<>();
-        _cacheChildrenConnect.add(access);
+        for (WebPage _0 : webpage) {
+          _cacheChildrenConnect.add(_0.access);
+        }
       }
       for (AttackStep attackStep : _cacheChildrenConnect) {
         attackStep.updateTtc(this, ttc, attackSteps);
-      }
-    }
-
-    @Override
-    public void setExpectedParents() {
-      super.setExpectedParents();
-      if (_cacheParentConnect == null) {
-        _cacheParentConnect = new HashSet<>();
-        if (webpage != null) {
-          _cacheParentConnect.add(webpage.attemptLogin);
-        }
-      }
-      for (AttackStep attackStep : _cacheParentConnect) {
-        addExpectedParent(attackStep);
       }
     }
 
@@ -175,7 +161,7 @@ public abstract class WebServer extends Asset {
     public void updateChildren(Set<AttackStep> attackSteps) {
       if (_cacheChildrenAuthenticateUser == null) {
         _cacheChildrenAuthenticateUser = new HashSet<>();
-        for (Interpreter _0 : interpreter) {
+        for (LanguageRuntime _0 : runtime) {
           _cacheChildrenAuthenticateUser.add(_0.getRequest);
         }
       }
@@ -189,8 +175,8 @@ public abstract class WebServer extends Asset {
       super.setExpectedParents();
       if (_cacheParentAuthenticateUser == null) {
         _cacheParentAuthenticateUser = new HashSet<>();
-        if (webpage != null) {
-          _cacheParentAuthenticateUser.add(webpage.attemptLogin);
+        for (WebPage _1 : webpage) {
+          _cacheParentAuthenticateUser.add(_1.attemptLogin);
         }
       }
       for (AttackStep attackStep : _cacheParentAuthenticateUser) {
@@ -204,7 +190,93 @@ public abstract class WebServer extends Asset {
     }
   }
 
+  public class SendMaliciousRequest extends AttackStepMin {
+    private Set<AttackStep> _cacheChildrenSendMaliciousRequest;
+
+    private Set<AttackStep> _cacheParentSendMaliciousRequest;
+
+    public SendMaliciousRequest(String name) {
+      super(name);
+    }
+
+    @Override
+    public void updateChildren(Set<AttackStep> attackSteps) {
+      if (_cacheChildrenSendMaliciousRequest == null) {
+        _cacheChildrenSendMaliciousRequest = new HashSet<>();
+        for (LanguageRuntime _0 : runtime) {
+          _cacheChildrenSendMaliciousRequest.add(_0.getRequest);
+        }
+      }
+      for (AttackStep attackStep : _cacheChildrenSendMaliciousRequest) {
+        attackStep.updateTtc(this, ttc, attackSteps);
+      }
+    }
+
+    @Override
+    public void setExpectedParents() {
+      super.setExpectedParents();
+      if (_cacheParentSendMaliciousRequest == null) {
+        _cacheParentSendMaliciousRequest = new HashSet<>();
+        for (WebPage _1 : webpage) {
+          _cacheParentSendMaliciousRequest.add(_1.attemptInjectionAttack);
+        }
+      }
+      for (AttackStep attackStep : _cacheParentSendMaliciousRequest) {
+        addExpectedParent(attackStep);
+      }
+    }
+
+    @Override
+    public double localTtc() {
+      return ttcHashMap.get("WebServer.sendMaliciousRequest");
+    }
+  }
+
+  public class AccessServerScripts extends AttackStepMin {
+    private Set<AttackStep> _cacheChildrenAccessServerScripts;
+
+    private Set<AttackStep> _cacheParentAccessServerScripts;
+
+    public AccessServerScripts(String name) {
+      super(name);
+    }
+
+    @Override
+    public void updateChildren(Set<AttackStep> attackSteps) {
+      if (_cacheChildrenAccessServerScripts == null) {
+        _cacheChildrenAccessServerScripts = new HashSet<>();
+        for (WebResource _0 : webResource) {
+          _cacheChildrenAccessServerScripts.add(_0.access);
+        }
+      }
+      for (AttackStep attackStep : _cacheChildrenAccessServerScripts) {
+        attackStep.updateTtc(this, ttc, attackSteps);
+      }
+    }
+
+    @Override
+    public void setExpectedParents() {
+      super.setExpectedParents();
+      if (_cacheParentAccessServerScripts == null) {
+        _cacheParentAccessServerScripts = new HashSet<>();
+        for (WebPage _1 : webpage) {
+          _cacheParentAccessServerScripts.add(_1.inspectScripts);
+        }
+      }
+      for (AttackStep attackStep : _cacheParentAccessServerScripts) {
+        addExpectedParent(attackStep);
+      }
+    }
+
+    @Override
+    public double localTtc() {
+      return ttcHashMap.get("WebServer.accessServerScripts");
+    }
+  }
+
   public class Access extends AttackStepMax {
+    private Set<AttackStep> _cacheChildrenAccess;
+
     private Set<AttackStep> _cacheParentAccess;
 
     public Access(String name) {
@@ -212,16 +284,25 @@ public abstract class WebServer extends Asset {
     }
 
     @Override
+    public void updateChildren(Set<AttackStep> attackSteps) {
+      if (_cacheChildrenAccess == null) {
+        _cacheChildrenAccess = new HashSet<>();
+        for (ProtectedResource _0 : resource) {
+          _cacheChildrenAccess.add(_0.access);
+        }
+      }
+      for (AttackStep attackStep : _cacheChildrenAccess) {
+        attackStep.updateTtc(this, ttc, attackSteps);
+      }
+    }
+
+    @Override
     public void setExpectedParents() {
       super.setExpectedParents();
       if (_cacheParentAccess == null) {
         _cacheParentAccess = new HashSet<>();
-        _cacheParentAccess.add(connect);
-        if (userCredentials != null) {
-          _cacheParentAccess.add(userCredentials.compromise);
-        }
-        if (userCredentials != null) {
-          _cacheParentAccess.add(userCredentials.access);
+        for (WebPage _1 : webpage) {
+          _cacheParentAccess.add(_1.attemptBrokenAccessControlAttack);
         }
       }
       for (AttackStep attackStep : _cacheParentAccess) {

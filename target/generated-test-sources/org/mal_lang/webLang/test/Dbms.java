@@ -9,25 +9,25 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Dbms extends Asset {
-  public Insert insert;
+  public Create create;
 
-  public Fetch fetch;
+  public Read read;
 
   public Update update;
 
   public Delete delete;
 
-  public Interpreter interpreter = null;
+  public LanguageRuntime runtime = null;
 
   public Set<Database> database = new HashSet<>();
 
   public Dbms(String name) {
     super(name);
     assetClassName = "Dbms";
-    AttackStep.allAttackSteps.remove(insert);
-    insert = new Insert(name);
-    AttackStep.allAttackSteps.remove(fetch);
-    fetch = new Fetch(name);
+    AttackStep.allAttackSteps.remove(create);
+    create = new Create(name);
+    AttackStep.allAttackSteps.remove(read);
+    read = new Read(name);
     AttackStep.allAttackSteps.remove(update);
     update = new Update(name);
     AttackStep.allAttackSteps.remove(delete);
@@ -38,9 +38,9 @@ public class Dbms extends Asset {
     this("Anonymous");
   }
 
-  public void addInterpreter(Interpreter interpreter) {
-    this.interpreter = interpreter;
-    interpreter.dbms.add(this);
+  public void addRuntime(LanguageRuntime runtime) {
+    this.runtime = runtime;
+    runtime.dbms.add(this);
   }
 
   public void addDatabase(Database database) {
@@ -50,8 +50,8 @@ public class Dbms extends Asset {
 
   @Override
   public String getAssociatedAssetClassName(String field) {
-    if (field.equals("interpreter")) {
-      return Interpreter.class.getName();
+    if (field.equals("runtime")) {
+      return LanguageRuntime.class.getName();
     } else if (field.equals("database")) {
       return Database.class.getName();
     }
@@ -61,9 +61,9 @@ public class Dbms extends Asset {
   @Override
   public Set<Asset> getAssociatedAssets(String field) {
     Set<Asset> assets = new HashSet<>();
-    if (field.equals("interpreter")) {
-      if (interpreter != null) {
-        assets.add(interpreter);
+    if (field.equals("runtime")) {
+      if (runtime != null) {
+        assets.add(runtime);
       }
     } else if (field.equals("database")) {
       assets.addAll(database);
@@ -74,31 +74,31 @@ public class Dbms extends Asset {
   @Override
   public Set<Asset> getAllAssociatedAssets() {
     Set<Asset> assets = new HashSet<>();
-    if (interpreter != null) {
-      assets.add(interpreter);
+    if (runtime != null) {
+      assets.add(runtime);
     }
     assets.addAll(database);
     return assets;
   }
 
-  public class Insert extends AttackStepMin {
-    private Set<AttackStep> _cacheChildrenInsert;
+  public class Create extends AttackStepMin {
+    private Set<AttackStep> _cacheChildrenCreate;
 
-    private Set<AttackStep> _cacheParentInsert;
+    private Set<AttackStep> _cacheParentCreate;
 
-    public Insert(String name) {
+    public Create(String name) {
       super(name);
     }
 
     @Override
     public void updateChildren(Set<AttackStep> attackSteps) {
-      if (_cacheChildrenInsert == null) {
-        _cacheChildrenInsert = new HashSet<>();
+      if (_cacheChildrenCreate == null) {
+        _cacheChildrenCreate = new HashSet<>();
         for (Database _0 : database) {
-          _cacheChildrenInsert.add(_0.insert);
+          _cacheChildrenCreate.add(_0.createUserInfo);
         }
       }
-      for (AttackStep attackStep : _cacheChildrenInsert) {
+      for (AttackStep attackStep : _cacheChildrenCreate) {
         attackStep.updateTtc(this, ttc, attackSteps);
       }
     }
@@ -106,41 +106,41 @@ public class Dbms extends Asset {
     @Override
     public void setExpectedParents() {
       super.setExpectedParents();
-      if (_cacheParentInsert == null) {
-        _cacheParentInsert = new HashSet<>();
-        if (interpreter != null) {
-          _cacheParentInsert.add(interpreter.postRequest);
+      if (_cacheParentCreate == null) {
+        _cacheParentCreate = new HashSet<>();
+        if (runtime != null) {
+          _cacheParentCreate.add(runtime.postRequest);
         }
       }
-      for (AttackStep attackStep : _cacheParentInsert) {
+      for (AttackStep attackStep : _cacheParentCreate) {
         addExpectedParent(attackStep);
       }
     }
 
     @Override
     public double localTtc() {
-      return ttcHashMap.get("Dbms.insert");
+      return ttcHashMap.get("Dbms.create");
     }
   }
 
-  public class Fetch extends AttackStepMin {
-    private Set<AttackStep> _cacheChildrenFetch;
+  public class Read extends AttackStepMin {
+    private Set<AttackStep> _cacheChildrenRead;
 
-    private Set<AttackStep> _cacheParentFetch;
+    private Set<AttackStep> _cacheParentRead;
 
-    public Fetch(String name) {
+    public Read(String name) {
       super(name);
     }
 
     @Override
     public void updateChildren(Set<AttackStep> attackSteps) {
-      if (_cacheChildrenFetch == null) {
-        _cacheChildrenFetch = new HashSet<>();
+      if (_cacheChildrenRead == null) {
+        _cacheChildrenRead = new HashSet<>();
         for (Database _0 : database) {
-          _cacheChildrenFetch.add(_0.fetch);
+          _cacheChildrenRead.add(_0.userInfo);
         }
       }
-      for (AttackStep attackStep : _cacheChildrenFetch) {
+      for (AttackStep attackStep : _cacheChildrenRead) {
         attackStep.updateTtc(this, ttc, attackSteps);
       }
     }
@@ -148,20 +148,20 @@ public class Dbms extends Asset {
     @Override
     public void setExpectedParents() {
       super.setExpectedParents();
-      if (_cacheParentFetch == null) {
-        _cacheParentFetch = new HashSet<>();
-        if (interpreter != null) {
-          _cacheParentFetch.add(interpreter.getRequest);
+      if (_cacheParentRead == null) {
+        _cacheParentRead = new HashSet<>();
+        if (runtime != null) {
+          _cacheParentRead.add(runtime.getRequest);
         }
       }
-      for (AttackStep attackStep : _cacheParentFetch) {
+      for (AttackStep attackStep : _cacheParentRead) {
         addExpectedParent(attackStep);
       }
     }
 
     @Override
     public double localTtc() {
-      return ttcHashMap.get("Dbms.fetch");
+      return ttcHashMap.get("Dbms.read");
     }
   }
 
@@ -179,7 +179,7 @@ public class Dbms extends Asset {
       if (_cacheChildrenUpdate == null) {
         _cacheChildrenUpdate = new HashSet<>();
         for (Database _0 : database) {
-          _cacheChildrenUpdate.add(_0.update);
+          _cacheChildrenUpdate.add(_0.modifyUserInfo);
         }
       }
       for (AttackStep attackStep : _cacheChildrenUpdate) {
@@ -192,8 +192,8 @@ public class Dbms extends Asset {
       super.setExpectedParents();
       if (_cacheParentUpdate == null) {
         _cacheParentUpdate = new HashSet<>();
-        if (interpreter != null) {
-          _cacheParentUpdate.add(interpreter.putRequest);
+        if (runtime != null) {
+          _cacheParentUpdate.add(runtime.putRequest);
         }
       }
       for (AttackStep attackStep : _cacheParentUpdate) {
@@ -208,8 +208,6 @@ public class Dbms extends Asset {
   }
 
   public class Delete extends AttackStepMin {
-    private Set<AttackStep> _cacheChildrenDelete;
-
     private Set<AttackStep> _cacheParentDelete;
 
     public Delete(String name) {
@@ -217,25 +215,12 @@ public class Dbms extends Asset {
     }
 
     @Override
-    public void updateChildren(Set<AttackStep> attackSteps) {
-      if (_cacheChildrenDelete == null) {
-        _cacheChildrenDelete = new HashSet<>();
-        for (Database _0 : database) {
-          _cacheChildrenDelete.add(_0.delete);
-        }
-      }
-      for (AttackStep attackStep : _cacheChildrenDelete) {
-        attackStep.updateTtc(this, ttc, attackSteps);
-      }
-    }
-
-    @Override
     public void setExpectedParents() {
       super.setExpectedParents();
       if (_cacheParentDelete == null) {
         _cacheParentDelete = new HashSet<>();
-        if (interpreter != null) {
-          _cacheParentDelete.add(interpreter.deleteRequest);
+        if (runtime != null) {
+          _cacheParentDelete.add(runtime.deleteRequest);
         }
       }
       for (AttackStep attackStep : _cacheParentDelete) {

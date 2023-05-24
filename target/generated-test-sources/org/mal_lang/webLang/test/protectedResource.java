@@ -1,45 +1,65 @@
 package org.mal_lang.webLang.test;
 
-import core.AttackStep;
-import core.AttackStepMin;
+import core.Asset;
 import java.lang.Override;
 import java.lang.String;
+import java.util.HashSet;
+import java.util.Set;
 
-public class protectedResource extends Information {
-  public Access access;
+public class ProtectedResource extends WebResource {
+  public WebServer webserver = null;
 
-  public protectedResource(String name) {
+  public Set<Account> userAccount = new HashSet<>();
+
+  public ProtectedResource(String name) {
     super(name);
-    assetClassName = "protectedResource";
-    AttackStep.allAttackSteps.remove(access);
-    access = new Access(name);
-    AttackStep.allAttackSteps.remove(deny);
-    deny = new Deny(name);
+    assetClassName = "ProtectedResource";
   }
 
-  public protectedResource() {
+  public ProtectedResource() {
     this("Anonymous");
   }
 
-  public class Access extends AttackStepMin {
-    public Access(String name) {
-      super(name);
-    }
-
-    @Override
-    public double localTtc() {
-      return ttcHashMap.get("protectedResource.access");
-    }
+  public void addWebserver(WebServer webserver) {
+    this.webserver = webserver;
+    webserver.resource.add(this);
   }
 
-  public class Deny extends Information.Deny {
-    public Deny(String name) {
-      super(name);
-    }
+  public void addUserAccount(Account userAccount) {
+    this.userAccount.add(userAccount);
+    userAccount.resource.add(this);
+  }
 
-    @Override
-    public double localTtc() {
-      return ttcHashMap.get("protectedResource.deny");
+  @Override
+  public String getAssociatedAssetClassName(String field) {
+    if (field.equals("webserver")) {
+      return WebServer.class.getName();
+    } else if (field.equals("userAccount")) {
+      return Account.class.getName();
     }
+    return "";
+  }
+
+  @Override
+  public Set<Asset> getAssociatedAssets(String field) {
+    Set<Asset> assets = new HashSet<>();
+    if (field.equals("webserver")) {
+      if (webserver != null) {
+        assets.add(webserver);
+      }
+    } else if (field.equals("userAccount")) {
+      assets.addAll(userAccount);
+    }
+    return assets;
+  }
+
+  @Override
+  public Set<Asset> getAllAssociatedAssets() {
+    Set<Asset> assets = new HashSet<>();
+    if (webserver != null) {
+      assets.add(webserver);
+    }
+    assets.addAll(userAccount);
+    return assets;
   }
 }

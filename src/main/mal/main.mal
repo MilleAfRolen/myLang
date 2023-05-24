@@ -28,45 +28,56 @@ category softwareStack {
     //behöver requests valideras av Webservern? Behöver Users som skickar requests authenticata sig själva? 
   asset WebServer {
     | connect
-      -> access
+      -> webpage.access
     | authenticateUser
-      -> interpreter.getRequest
+      -> runtime.getRequest
+    | sendMaliciousRequest
+      -> runtime.getRequest
+    | accessServerScripts
+      -> webResource.access
     & access
       -> resource.access
   }
 
-  asset WebPage {
+  asset WebPage extends WebResource {
     | attemptLogin
-      -> webserver.connect,
-         webserver.authenticateUser
-    | brokenAccessControlAttack
-      -> resource.access
+      -> webserver.authenticateUser
+    | inspectScripts
+      -> webserver.accessServerScripts,      //Gets access and reads scripts available on site
+         attemptBrokenAccessControlAttack   //Finds URI path to administration section of website
+
+    | attemptInjectionAttack
+      -> webserver.sendMaliciousRequest,    //SQLInject to get access to admin account
+         attemptBrokenAccessControlAttack   //Admin account can get access to administration section of website
+
+    & attemptBrokenAccessControlAttack
+      -> webserver.access                   //Access administration section
   }
 
   asset Dbms {
-    | insert
-      -> database.insert
-    | fetch
-      -> database.fetch
+    | create
+      -> database.createUserInfo
+    | read
+      -> database.userInfo
     | update
-      -> database.update
+      -> database.modifyUserInfo
     | delete
-      -> database.delete
   }
 
   asset Database {
-    | insert
-    | fetch
-      -> userCredentials.access
-    | update
-    | delete
+    | createUserInfo
+      -> credentials.createCredentials
+    | userInfo
+      -> credentials.access
+    | modifyUserInfo
+      -> credentials.compromise
   }
 
-  asset Interpreter {
+  asset LanguageRuntime {
     | postRequest
-      -> dbms.insert
+      -> dbms.create
     | getRequest
-      -> dbms.fetch
+      -> dbms.read
     | putRequest
       -> dbms.update
     | deleteRequest
@@ -77,40 +88,38 @@ category softwareStack {
 
 category Resources {
 
-  asset protectedResource {
+  asset ProtectedResource extends WebResource {
+
+  }
+
+  asset WebResource {
     | access
-    | deny
   }
 }
 
  category User {
-  //
   asset User {
     | phishing
-      -> userAccount.compromise
+      -> account.compromise
     | loginRequest
       -> webpage.attemptLogin
   }
 
-  asset UserAccount {
-    //connect to the account
-    | connect
-      -> compromise
-    | authenticate
-      -> compromise
-    & compromise
-      -> userCredentials.compromise
+  asset Account {
+    | compromise
+      -> resource.access
   }
-
  }
 
 category Credentials {
 
-  asset UserCredentials {
+  asset Credentials {
+    | createCredentials
+      -> access
     | compromise
-      -> webserver.access
+      -> account.compromise
     | access
-      -> webserver.access
+      -> account.compromise
   }
  }
 
@@ -118,16 +127,15 @@ category Credentials {
 
 associations {
   OperativeSystem [os] 1 <-- runs --> 1 [webserver] WebServer
-  WebServer [webserver] 1 <-- executes --> * [interpreter] Interpreter
-  Interpreter [interpreter] 1 <-- uses --> * [dbms] Dbms
+  WebServer [webserver] 1 <-- executes --> * [runtime] LanguageRuntime
+  WebServer [webserver] 1 <-- responses --> * [webpage] WebPage
+  WebServer [webserver] 1 <-- uses --> * [resource] ProtectedResource
+  WebServer [server] 1 <-- uses --> * [webResource] WebResource
+  LanguageRuntime [runtime] 1 <-- uses --> * [dbms] Dbms
   Dbms [dbms] 1 <-- queries --> * [database] Database
-  UserCredentials [userCredentials] 1 <-- authenticates --> 1 [userAccount] UserAccount
-  WebServer [webserver] 1 <-- hosts --> * [userAccount] UserAccount
-  UserCredentials [userCredentials] 1 <-- authenticates --> 1 [webserver] WebServer
-  User [user] 1 <-- has --> * [userAccount] UserAccount
-  Database [database] 1 <-- stores --> * [userCredentials] UserCredentials
-  WebServer [webserver] 1 <-- responses --> 1 [webpage] WebPage
-  WebServer [webserver] 1 <-- giveAccess --> * [resource] protectedResource
-  WebPage [webpage] 1 <-- access --> * [resource] protectedResource
-  User [user] * <-- interacts --> 1 [webpage] WebPage
+  Credentials [credentials] 1 <-- authenticates --> 1 [account] Account
+  Account [userAccount] * <-- accesses --> * [resource] ProtectedResource
+  User [user] 1 <-- has --> * [account] Account
+  User [user] * <-- interacts --> * [webpage] WebPage
+  Database [database] 1 <-- stores --> * [credentials] Credentials
 }

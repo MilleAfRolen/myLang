@@ -2,7 +2,6 @@ package org.mal_lang.webLang.test;
 
 import core.Asset;
 import core.AttackStep;
-import core.AttackStepMax;
 import core.AttackStepMin;
 import java.lang.Override;
 import java.lang.String;
@@ -12,32 +11,41 @@ import java.util.Set;
 public class User extends Asset {
   public Phishing phishing;
 
-  public RequestAccess requestAccess;
+  public LoginRequest loginRequest;
 
-  public Set<UserAccount> userAccount = new HashSet<>();
+  public Set<Account> account = new HashSet<>();
+
+  public Set<WebPage> webpage = new HashSet<>();
 
   public User(String name) {
     super(name);
     assetClassName = "User";
     AttackStep.allAttackSteps.remove(phishing);
     phishing = new Phishing(name);
-    AttackStep.allAttackSteps.remove(requestAccess);
-    requestAccess = new RequestAccess(name);
+    AttackStep.allAttackSteps.remove(loginRequest);
+    loginRequest = new LoginRequest(name);
   }
 
   public User() {
     this("Anonymous");
   }
 
-  public void addUserAccount(UserAccount userAccount) {
-    this.userAccount.add(userAccount);
-    userAccount.user = this;
+  public void addAccount(Account account) {
+    this.account.add(account);
+    account.user = this;
+  }
+
+  public void addWebpage(WebPage webpage) {
+    this.webpage.add(webpage);
+    webpage.user.add(this);
   }
 
   @Override
   public String getAssociatedAssetClassName(String field) {
-    if (field.equals("userAccount")) {
-      return UserAccount.class.getName();
+    if (field.equals("account")) {
+      return Account.class.getName();
+    } else if (field.equals("webpage")) {
+      return WebPage.class.getName();
     }
     return "";
   }
@@ -45,8 +53,10 @@ public class User extends Asset {
   @Override
   public Set<Asset> getAssociatedAssets(String field) {
     Set<Asset> assets = new HashSet<>();
-    if (field.equals("userAccount")) {
-      assets.addAll(userAccount);
+    if (field.equals("account")) {
+      assets.addAll(account);
+    } else if (field.equals("webpage")) {
+      assets.addAll(webpage);
     }
     return assets;
   }
@@ -54,7 +64,8 @@ public class User extends Asset {
   @Override
   public Set<Asset> getAllAssociatedAssets() {
     Set<Asset> assets = new HashSet<>();
-    assets.addAll(userAccount);
+    assets.addAll(account);
+    assets.addAll(webpage);
     return assets;
   }
 
@@ -69,7 +80,7 @@ public class User extends Asset {
     public void updateChildren(Set<AttackStep> attackSteps) {
       if (_cacheChildrenPhishing == null) {
         _cacheChildrenPhishing = new HashSet<>();
-        for (UserAccount _0 : userAccount) {
+        for (Account _0 : account) {
           _cacheChildrenPhishing.add(_0.compromise);
         }
       }
@@ -84,14 +95,29 @@ public class User extends Asset {
     }
   }
 
-  public class RequestAccess extends AttackStepMax {
-    public RequestAccess(String name) {
+  public class LoginRequest extends AttackStepMin {
+    private Set<AttackStep> _cacheChildrenLoginRequest;
+
+    public LoginRequest(String name) {
       super(name);
     }
 
     @Override
+    public void updateChildren(Set<AttackStep> attackSteps) {
+      if (_cacheChildrenLoginRequest == null) {
+        _cacheChildrenLoginRequest = new HashSet<>();
+        for (WebPage _0 : webpage) {
+          _cacheChildrenLoginRequest.add(_0.attemptLogin);
+        }
+      }
+      for (AttackStep attackStep : _cacheChildrenLoginRequest) {
+        attackStep.updateTtc(this, ttc, attackSteps);
+      }
+    }
+
+    @Override
     public double localTtc() {
-      return ttcHashMap.get("User.requestAccess");
+      return ttcHashMap.get("User.loginRequest");
     }
   }
 }
