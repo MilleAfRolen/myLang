@@ -45,7 +45,6 @@ public class TestWebLang {
 			sqLiteDatabase.addCredentials(credentials);
 		}
 	}
-	
 
 	@Test
 	public void testAdminSection() {
@@ -53,25 +52,57 @@ public class TestWebLang {
 		OwaspModel juiceshop = new OwaspModel();
 
 		Attacker attacker = new Attacker();
-		attacker.addAttackPoint(juiceshop.angularjs.inspectScripts);			//check scripts to hopefully find URI path to admin section
-		attacker.addAttackPoint(juiceshop.angularjs.attemptInjectionAttack);	//SQL injection to gain access to admin account
-		
+		attacker.addAttackPoint(juiceshop.angularjs.inspectScripts); // check scripts to hopefully find URI path to admin
+																																	// section
+		attacker.addAttackPoint(juiceshop.angularjs.attemptInjectionAttack); // SQL injection to gain access to admin
+																																					// account
+
 		attacker.attack();
 		juiceshop.angularjs.inspectScripts.assertCompromisedInstantaneously();
 		juiceshop.expressjs.accessServerScripts.assertCompromisedInstantaneouslyFrom(juiceshop.angularjs.inspectScripts);
 		juiceshop.scripts.access.assertCompromisedInstantaneouslyFrom(juiceshop.expressjs.accessServerScripts);
-		juiceshop.angularjs.attemptBrokenAccessControlAttack.assertCompromisedInstantaneouslyFrom(juiceshop.angularjs.inspectScripts);
+		juiceshop.angularjs.attemptBrokenAccessControlAttack
+				.assertCompromisedInstantaneouslyFrom(juiceshop.angularjs.inspectScripts);
 
 		juiceshop.angularjs.attemptInjectionAttack.assertCompromisedInstantaneously();
 		juiceshop.expressjs.sendMaliciousRequest.assertCompromisedInstantaneously();
 		juiceshop.sequelize.getRequest.assertCompromisedInstantaneouslyFrom(juiceshop.expressjs.sendMaliciousRequest);
 		juiceshop.SQLite.read.assertCompromisedInstantaneously();
 		juiceshop.sqLiteDatabase.userInfo.assertCompromisedInstantaneously();
-		juiceshop.angularjs.attemptBrokenAccessControlAttack.assertCompromisedInstantaneouslyFrom(juiceshop.angularjs.attemptInjectionAttack);
+		juiceshop.angularjs.attemptBrokenAccessControlAttack
+				.assertCompromisedInstantaneouslyFrom(juiceshop.angularjs.attemptInjectionAttack);
 
 		juiceshop.expressjs.access.assertCompromisedInstantaneously();
-		//juiceshop.adminCredentials.access.assertCompromisedInstantaneously();
-		juiceshop.adminSection.access.assertCompromisedInstantaneouslyFrom(juiceshop.expressjs.access);		//Check if you can access admin section
+		// juiceshop.adminCredentials.access.assertCompromisedInstantaneously();
+		juiceshop.adminSection.access.assertCompromisedInstantaneouslyFrom(juiceshop.expressjs.access); // Check if you can
+																																																		// access admin
+																																																		// section
+	}
+
+	@Test
+	public void testInject() {
+		System.out.println("Try to inject");
+		OwaspModel juiceshop = new OwaspModel();
+		Attacker attacker = new Attacker();
+		attacker.addAttackPoint(juiceshop.angularjs.attemptInjectionAttack);
+		attacker.attack();
+
+		juiceshop.angularjs.inspectScripts.assertCompromisedInstantaneously();
+		juiceshop.expressjs.accessServerScripts.assertCompromisedInstantaneouslyFrom(juiceshop.angularjs.inspectScripts);
+		juiceshop.scripts.access.assertCompromisedInstantaneouslyFrom(juiceshop.expressjs.accessServerScripts);
+
+		juiceshop.angularjs.attemptInjectionAttack.assertCompromisedInstantaneously();
+		juiceshop.expressjs.sendMaliciousRequest.assertCompromisedInstantaneously();
+		juiceshop.sequelize.getRequest.assertCompromisedInstantaneouslyFrom(juiceshop.expressjs.sendMaliciousRequest);
+		juiceshop.SQLite.read.assertCompromisedInstantaneously();
+		juiceshop.sqLiteDatabase.userInfo.assertCompromisedInstantaneously();
+		juiceshop.angularjs.attemptBrokenAccessControlAttack
+				.assertCompromisedInstantaneouslyFrom(juiceshop.angularjs.attemptInjectionAttack);
+
+		juiceshop.expressjs.access.assertCompromisedInstantaneously();
+		// juiceshop.adminCredentials.access.assertCompromisedInstantaneously();
+		juiceshop.adminSection.access.assertCompromisedInstantaneouslyFrom(juiceshop.expressjs.access);
+
 	}
 
 	@Test
@@ -87,16 +118,16 @@ public class TestWebLang {
 		juiceshop.scripts.access.assertCompromisedInstantaneously();
 		juiceshop.angularjs.attemptBrokenAccessControlAttack.assertUncompromisedFrom(juiceshop.angularjs.inspectScripts);
 
-		juiceshop.angularjs.attemptBrokenAccessControlAttack.assertUncompromisedFrom(juiceshop.angularjs.attemptInjectionAttack);
-
+		juiceshop.angularjs.attemptBrokenAccessControlAttack
+				.assertUncompromisedFrom(juiceshop.angularjs.attemptInjectionAttack);
 
 		juiceshop.expressjs.access.assertUncompromised();
-		juiceshop.adminSection.access.assertUncompromisedFrom(juiceshop.expressjs.access);		//Check if you can access admin section
-		//juiceshop.adminCredentials.access.assertCompromisedInstantaneously();
+		juiceshop.adminSection.access.assertUncompromisedFrom(juiceshop.expressjs.access); // Check if you can access admin
+																																												// section
+		// juiceshop.adminCredentials.access.assertCompromisedInstantaneously();
 	}
 
-    
-    @AfterEach
+	@AfterEach
 	public void deleteModel() {
 		Asset.allAssets.clear();
 		AttackStep.allAttackSteps.clear();

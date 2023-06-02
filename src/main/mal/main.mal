@@ -20,12 +20,12 @@
 
 category softwareStack {
   
-  //funkar information ? vad ska man ta från coreLang?
+ 
   asset OperativeSystem {
     | backdoorAccess
   }
 
-    //behöver requests valideras av Webservern? Behöver Users som skickar requests authenticata sig själva? 
+   
   asset WebServer {
     | connect
       -> webpage.access
