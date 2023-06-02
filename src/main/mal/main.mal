@@ -21,7 +21,7 @@
 category softwareStack {
   
  
-  asset OperativeSystem {
+  asset OperatingSystem {
     | backdoorAccess
   }
 
@@ -126,7 +126,7 @@ category Credentials {
 
 
 associations {
-  OperativeSystem [os] 1 <-- runs --> 1 [webserver] WebServer
+  OperatingSystem [os] 1 <-- runs --> 1 [webserver] WebServer
   WebServer [webserver] 1 <-- executes --> * [runtime] LanguageRuntime
   WebServer [webserver] 1 <-- responses --> * [webpage] WebPage
   WebServer [webserver] 1 <-- uses --> * [resource] ProtectedResource

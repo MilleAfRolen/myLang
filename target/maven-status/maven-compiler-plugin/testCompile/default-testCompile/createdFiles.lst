@@ -20,10 +20,8 @@ org/mal_lang/webLang/test/Account$Compromise.class
 org/mal_lang/webLang/test/LanguageRuntime$GetRequest.class
 org/mal_lang/webLang/test/WebServer$Connect.class
 org/mal_lang/webLang/test/Database$ModifyUserInfo.class
-org/mal_lang/webLang/test/OperativeSystem.class
 org/mal_lang/webLang/test/WebServer$Access.class
 org/mal_lang/webLang/test/Database$CreateUserInfo.class
-org/mal_lang/webLang/test/OperativeSystem$BackdoorAccess.class
 core/AttackStepMax.class
 org/mal_lang/webLang/test/WebServer$SendMaliciousRequest.class
 org/mal_lang/webLang/test/Dbms$Delete.class
@@ -36,10 +34,12 @@ core/Defense.class
 org/mal_lang/webLang/test/Database$UserInfo.class
 org/mal_lang/webLang/test/Dbms$Create.class
 org/mal_lang/webLang/test/WebPage.class
+org/mal_lang/webLang/test/OperatingSystem.class
 org/mal_lang/webLang/test/Database.class
 org/mal_lang/webLang/test/WebPage$AttemptLogin.class
 org/mal_lang/webLang/test/WebResource$Access.class
 core/Attacker.class
+org/mal_lang/webLang/test/OperatingSystem$BackdoorAccess.class
 org/mal_lang/webLang/test/ProtectedResource.class
 org/mal_lang/webLang/test/WebResource.class
 org/mal_lang/webLang/test/WebPage$AttemptBrokenAccessControlAttack.class

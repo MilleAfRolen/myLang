@@ -20,7 +20,7 @@ public class WebServer extends Asset {
 
   public Access access;
 
-  public OperativeSystem os = null;
+  public OperatingSystem os = null;
 
   public Set<LanguageRuntime> runtime = new HashSet<>();
 
@@ -49,7 +49,7 @@ public class WebServer extends Asset {
     this("Anonymous");
   }
 
-  public void addOs(OperativeSystem os) {
+  public void addOs(OperatingSystem os) {
     this.os = os;
     os.webserver = this;
   }
@@ -77,7 +77,7 @@ public class WebServer extends Asset {
   @Override
   public String getAssociatedAssetClassName(String field) {
     if (field.equals("os")) {
-      return OperativeSystem.class.getName();
+      return OperatingSystem.class.getName();
     } else if (field.equals("runtime")) {
       return LanguageRuntime.class.getName();
     } else if (field.equals("webpage")) {

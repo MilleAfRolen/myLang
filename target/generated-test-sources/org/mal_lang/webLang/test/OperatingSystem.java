@@ -8,19 +8,19 @@ import java.lang.String;
 import java.util.HashSet;
 import java.util.Set;
 
-public class OperativeSystem extends Asset {
+public class OperatingSystem extends Asset {
   public BackdoorAccess backdoorAccess;
 
   public WebServer webserver = null;
 
-  public OperativeSystem(String name) {
+  public OperatingSystem(String name) {
     super(name);
-    assetClassName = "OperativeSystem";
+    assetClassName = "OperatingSystem";
     AttackStep.allAttackSteps.remove(backdoorAccess);
     backdoorAccess = new BackdoorAccess(name);
   }
 
-  public OperativeSystem() {
+  public OperatingSystem() {
     this("Anonymous");
   }
 
@@ -64,7 +64,7 @@ public class OperativeSystem extends Asset {
 
     @Override
     public double localTtc() {
-      return ttcHashMap.get("OperativeSystem.backdoorAccess");
+      return ttcHashMap.get("OperatingSystem.backdoorAccess");
     }
   }
 }
