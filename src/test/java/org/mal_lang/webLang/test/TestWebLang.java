@@ -136,34 +136,6 @@ public class TestWebLang {
 	}
 
 
-	// @Test
-	// public void testInject() {
-	// 	System.out.println("Try to inject");
-	// 	OwaspModel juiceshop = new OwaspModel();
-	// 	Attacker attacker = new Attacker();
-	// 	attacker.addAttackPoint(juiceshop.angularjs.attemptInjectionAttack);
-	// 	attacker.attack();
-
-	// 	juiceshop.angularjs.inspectScripts.assertCompromisedInstantaneously();
-	// 	juiceshop.expressjs.accessServerScripts.assertCompromisedInstantaneouslyFrom(juiceshop.angularjs.inspectScripts);
-	// 	juiceshop.scripts.access.assertCompromisedInstantaneouslyFrom(juiceshop.expressjs.accessServerScripts);
-
-	// 	juiceshop.angularjs.attemptInjectionAttack.assertCompromisedInstantaneously();
-	// 	juiceshop.expressjs.sendMaliciousRequest.assertCompromisedInstantaneously();
-	// 	juiceshop.sequelize.getRequest.assertCompromisedInstantaneouslyFrom(juiceshop.expressjs.sendMaliciousRequest);
-	// 	juiceshop.SQLite.read.assertCompromisedInstantaneously();
-	// 	juiceshop.sqLiteDatabase.userInfo.assertCompromisedInstantaneously();
-	// 	juiceshop.angularjs.attemptBrokenAccessControlAttack
-	// 			.assertCompromisedInstantaneouslyFrom(juiceshop.angularjs.attemptInjectionAttack);
-
-	// 	juiceshop.expressjs.access.assertCompromisedInstantaneously();
-	// 	// juiceshop.adminCredentials.access.assertCompromisedInstantaneously();
-	// 	juiceshop.adminSection.access.assertCompromisedInstantaneouslyFrom(juiceshop.expressjs.access);
-
-	// }
-
-
-
 	@AfterEach
 	public void deleteModel() {
 		Asset.allAssets.clear();

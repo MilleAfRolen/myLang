@@ -6,8 +6,8 @@ org/mal_lang/webLang/test/LanguageRuntime$PostRequest.class
 org/mal_lang/webLang/test/User$Phishing.class
 org/mal_lang/webLang/test/WebPage$IfScriptsAvailable.class
 core/AttackStep.class
-org/mal_lang/webLang/test/WebPage$Access.class
 org/mal_lang/webLang/test/LanguageRuntime$DeleteRequest.class
+org/mal_lang/webLang/test/WebPage$Access.class
 org/mal_lang/webLang/test/Account$Compromise.class
 org/mal_lang/webLang/test/LanguageRuntime$GetRequest.class
 org/mal_lang/webLang/test/WebPage$IfCompromisedAccountHasProtectedResource.class
@@ -23,9 +23,9 @@ org/mal_lang/webLang/test/Database$DeleteUserInfo.class
 org/mal_lang/webLang/test/WebPage$IfCompromisedAccountHasProtectedResource$Disable.class
 core/Attacker.class
 org/mal_lang/webLang/test/ProtectedResource.class
-org/mal_lang/webLang/test/WebPage$BrokenAccessControlAttack.class
 org/mal_lang/webLang/test/WebResource.class
 org/mal_lang/webLang/test/WebPage$AttemptBrokenAccessControlAttack.class
+org/mal_lang/webLang/test/WebPage$BrokenAccessControlAttack.class
 core/AttackStepMin.class
 org/mal_lang/webLang/test/Credentials.class
 org/mal_lang/webLang/test/Credentials$ReadCredentials.class
@@ -47,7 +47,7 @@ org/mal_lang/webLang/test/Dbms$Create.class
 org/mal_lang/webLang/test/WebPage.class
 org/mal_lang/webLang/test/OperatingSystem.class
 org/mal_lang/webLang/test/Database.class
-org/mal_lang/webLang/test/User$AccountCompromised.class
 org/mal_lang/webLang/test/WebPage$AttemptLogin.class
+org/mal_lang/webLang/test/User$AccountCompromised.class
 org/mal_lang/webLang/test/WebResource$Access.class
 org/mal_lang/webLang/test/WebPage$IfScriptsAvailable$Disable.class
