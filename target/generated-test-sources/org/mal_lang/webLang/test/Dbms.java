@@ -40,7 +40,7 @@ public class Dbms extends Asset {
 
   public void addRuntime(LanguageRuntime runtime) {
     this.runtime = runtime;
-    runtime.dbms.add(this);
+    runtime.dbms = this;
   }
 
   public void addDatabase(Database database) {
@@ -137,7 +137,7 @@ public class Dbms extends Asset {
       if (_cacheChildrenRead == null) {
         _cacheChildrenRead = new HashSet<>();
         for (Database _0 : database) {
-          _cacheChildrenRead.add(_0.userInfo);
+          _cacheChildrenRead.add(_0.readUserInfo);
         }
       }
       for (AttackStep attackStep : _cacheChildrenRead) {
@@ -208,10 +208,25 @@ public class Dbms extends Asset {
   }
 
   public class Delete extends AttackStepMin {
+    private Set<AttackStep> _cacheChildrenDelete;
+
     private Set<AttackStep> _cacheParentDelete;
 
     public Delete(String name) {
       super(name);
+    }
+
+    @Override
+    public void updateChildren(Set<AttackStep> attackSteps) {
+      if (_cacheChildrenDelete == null) {
+        _cacheChildrenDelete = new HashSet<>();
+        for (Database _0 : database) {
+          _cacheChildrenDelete.add(_0.deleteUserInfo);
+        }
+      }
+      for (AttackStep attackStep : _cacheChildrenDelete) {
+        attackStep.updateTtc(this, ttc, attackSteps);
+      }
     }
 
     @Override

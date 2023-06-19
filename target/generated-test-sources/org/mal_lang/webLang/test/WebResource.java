@@ -8,10 +8,8 @@ import java.lang.String;
 import java.util.HashSet;
 import java.util.Set;
 
-public class WebResource extends Asset {
+public abstract class WebResource extends Asset {
   public Access access;
-
-  public WebServer server = null;
 
   public WebResource(String name) {
     super(name);
@@ -22,39 +20,6 @@ public class WebResource extends Asset {
 
   public WebResource() {
     this("Anonymous");
-  }
-
-  public void addServer(WebServer server) {
-    this.server = server;
-    server.webResource.add(this);
-  }
-
-  @Override
-  public String getAssociatedAssetClassName(String field) {
-    if (field.equals("server")) {
-      return WebServer.class.getName();
-    }
-    return "";
-  }
-
-  @Override
-  public Set<Asset> getAssociatedAssets(String field) {
-    Set<Asset> assets = new HashSet<>();
-    if (field.equals("server")) {
-      if (server != null) {
-        assets.add(server);
-      }
-    }
-    return assets;
-  }
-
-  @Override
-  public Set<Asset> getAllAssociatedAssets() {
-    Set<Asset> assets = new HashSet<>();
-    if (server != null) {
-      assets.add(server);
-    }
-    return assets;
   }
 
   public class Access extends AttackStepMin {
@@ -69,22 +34,14 @@ public class WebResource extends Asset {
       super.setExpectedParents();
       if (_cacheParentAccess == null) {
         _cacheParentAccess = new HashSet<>();
-        if (WebResource.this instanceof WebPage) {
-          if (((org.mal_lang.webLang.test.WebPage) WebResource.this).webserver != null) {
-            _cacheParentAccess.add(((org.mal_lang.webLang.test.WebPage) WebResource.this).webserver.connect);
-          }
-        }
-        if (server != null) {
-          _cacheParentAccess.add(server.accessServerScripts);
-        }
-        if (WebResource.this instanceof ProtectedResource) {
-          if (((org.mal_lang.webLang.test.ProtectedResource) WebResource.this).webserver != null) {
-            _cacheParentAccess.add(((org.mal_lang.webLang.test.ProtectedResource) WebResource.this).webserver.access);
+        if (WebResource.this instanceof ScriptResource) {
+          if (((org.mal_lang.webLang.test.ScriptResource) WebResource.this).webserver != null) {
+            _cacheParentAccess.add(((org.mal_lang.webLang.test.ScriptResource) WebResource.this).webserver.accessServerScripts);
           }
         }
         if (WebResource.this instanceof ProtectedResource) {
-          for (Account _0 : ((org.mal_lang.webLang.test.ProtectedResource) WebResource.this).userAccount) {
-            _cacheParentAccess.add(_0.compromise);
+          if (((org.mal_lang.webLang.test.ProtectedResource) WebResource.this).server != null) {
+            _cacheParentAccess.add(((org.mal_lang.webLang.test.ProtectedResource) WebResource.this).server.access);
           }
         }
       }

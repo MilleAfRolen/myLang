@@ -6,21 +6,21 @@ import java.lang.String;
 import java.util.HashSet;
 import java.util.Set;
 
-public class OperatingSystem extends Asset {
-  public Set<WebServer> webserver = new HashSet<>();
+public class ScriptResource extends WebResource {
+  public WebServer webserver = null;
 
-  public OperatingSystem(String name) {
+  public ScriptResource(String name) {
     super(name);
-    assetClassName = "OperatingSystem";
+    assetClassName = "ScriptResource";
   }
 
-  public OperatingSystem() {
+  public ScriptResource() {
     this("Anonymous");
   }
 
   public void addWebserver(WebServer webserver) {
-    this.webserver.add(webserver);
-    webserver.os = this;
+    this.webserver = webserver;
+    webserver.scripts.add(this);
   }
 
   @Override
@@ -35,7 +35,9 @@ public class OperatingSystem extends Asset {
   public Set<Asset> getAssociatedAssets(String field) {
     Set<Asset> assets = new HashSet<>();
     if (field.equals("webserver")) {
-      assets.addAll(webserver);
+      if (webserver != null) {
+        assets.add(webserver);
+      }
     }
     return assets;
   }
@@ -43,7 +45,9 @@ public class OperatingSystem extends Asset {
   @Override
   public Set<Asset> getAllAssociatedAssets() {
     Set<Asset> assets = new HashSet<>();
-    assets.addAll(webserver);
+    if (webserver != null) {
+      assets.add(webserver);
+    }
     return assets;
   }
 }

@@ -2,7 +2,6 @@ package org.mal_lang.webLang.test;
 
 import core.Asset;
 import core.AttackStep;
-import core.AttackStepMax;
 import core.AttackStepMin;
 import java.lang.Override;
 import java.lang.String;
@@ -28,7 +27,7 @@ public class WebServer extends Asset {
 
   public Set<ProtectedResource> resource = new HashSet<>();
 
-  public Set<WebResource> webResource = new HashSet<>();
+  public Set<ScriptResource> scripts = new HashSet<>();
 
   public WebServer(String name) {
     super(name);
@@ -51,7 +50,7 @@ public class WebServer extends Asset {
 
   public void addOs(OperatingSystem os) {
     this.os = os;
-    os.webserver = this;
+    os.webserver.add(this);
   }
 
   public void addRuntime(LanguageRuntime runtime) {
@@ -66,12 +65,12 @@ public class WebServer extends Asset {
 
   public void addResource(ProtectedResource resource) {
     this.resource.add(resource);
-    resource.webserver = this;
+    resource.server = this;
   }
 
-  public void addWebResource(WebResource webResource) {
-    this.webResource.add(webResource);
-    webResource.server = this;
+  public void addScripts(ScriptResource scripts) {
+    this.scripts.add(scripts);
+    scripts.webserver = this;
   }
 
   @Override
@@ -84,8 +83,8 @@ public class WebServer extends Asset {
       return WebPage.class.getName();
     } else if (field.equals("resource")) {
       return ProtectedResource.class.getName();
-    } else if (field.equals("webResource")) {
-      return WebResource.class.getName();
+    } else if (field.equals("scripts")) {
+      return ScriptResource.class.getName();
     }
     return "";
   }
@@ -103,8 +102,8 @@ public class WebServer extends Asset {
       assets.addAll(webpage);
     } else if (field.equals("resource")) {
       assets.addAll(resource);
-    } else if (field.equals("webResource")) {
-      assets.addAll(webResource);
+    } else if (field.equals("scripts")) {
+      assets.addAll(scripts);
     }
     return assets;
   }
@@ -118,7 +117,7 @@ public class WebServer extends Asset {
     assets.addAll(runtime);
     assets.addAll(webpage);
     assets.addAll(resource);
-    assets.addAll(webResource);
+    assets.addAll(scripts);
     return assets;
   }
 
@@ -245,7 +244,7 @@ public class WebServer extends Asset {
     public void updateChildren(Set<AttackStep> attackSteps) {
       if (_cacheChildrenAccessServerScripts == null) {
         _cacheChildrenAccessServerScripts = new HashSet<>();
-        for (WebResource _0 : webResource) {
+        for (ScriptResource _0 : scripts) {
           _cacheChildrenAccessServerScripts.add(_0.access);
         }
       }
@@ -274,7 +273,7 @@ public class WebServer extends Asset {
     }
   }
 
-  public class Access extends AttackStepMax {
+  public class Access extends AttackStepMin {
     private Set<AttackStep> _cacheChildrenAccess;
 
     private Set<AttackStep> _cacheParentAccess;
@@ -302,7 +301,7 @@ public class WebServer extends Asset {
       if (_cacheParentAccess == null) {
         _cacheParentAccess = new HashSet<>();
         for (WebPage _1 : webpage) {
-          _cacheParentAccess.add(_1.attemptBrokenAccessControlAttack);
+          _cacheParentAccess.add(_1.brokenAccessControlAttack);
         }
       }
       for (AttackStep attackStep : _cacheParentAccess) {

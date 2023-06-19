@@ -11,9 +11,11 @@ import java.util.Set;
 public class Credentials extends Asset {
   public CreateCredentials createCredentials;
 
-  public Compromise compromise;
+  public ReadCredentials readCredentials;
 
-  public Access access;
+  public RemoveCredentials removeCredentials;
+
+  public ModifyCredentials modifyCredentials;
 
   public Account account = null;
 
@@ -24,10 +26,12 @@ public class Credentials extends Asset {
     assetClassName = "Credentials";
     AttackStep.allAttackSteps.remove(createCredentials);
     createCredentials = new CreateCredentials(name);
-    AttackStep.allAttackSteps.remove(compromise);
-    compromise = new Compromise(name);
-    AttackStep.allAttackSteps.remove(access);
-    access = new Access(name);
+    AttackStep.allAttackSteps.remove(readCredentials);
+    readCredentials = new ReadCredentials(name);
+    AttackStep.allAttackSteps.remove(removeCredentials);
+    removeCredentials = new RemoveCredentials(name);
+    AttackStep.allAttackSteps.remove(modifyCredentials);
+    modifyCredentials = new ModifyCredentials(name);
   }
 
   public Credentials() {
@@ -82,23 +86,10 @@ public class Credentials extends Asset {
   }
 
   public class CreateCredentials extends AttackStepMin {
-    private Set<AttackStep> _cacheChildrenCreateCredentials;
-
     private Set<AttackStep> _cacheParentCreateCredentials;
 
     public CreateCredentials(String name) {
       super(name);
-    }
-
-    @Override
-    public void updateChildren(Set<AttackStep> attackSteps) {
-      if (_cacheChildrenCreateCredentials == null) {
-        _cacheChildrenCreateCredentials = new HashSet<>();
-        _cacheChildrenCreateCredentials.add(access);
-      }
-      for (AttackStep attackStep : _cacheChildrenCreateCredentials) {
-        attackStep.updateTtc(this, ttc, attackSteps);
-      }
     }
 
     @Override
@@ -121,24 +112,24 @@ public class Credentials extends Asset {
     }
   }
 
-  public class Compromise extends AttackStepMin {
-    private Set<AttackStep> _cacheChildrenCompromise;
+  public class ReadCredentials extends AttackStepMin {
+    private Set<AttackStep> _cacheChildrenReadCredentials;
 
-    private Set<AttackStep> _cacheParentCompromise;
+    private Set<AttackStep> _cacheParentReadCredentials;
 
-    public Compromise(String name) {
+    public ReadCredentials(String name) {
       super(name);
     }
 
     @Override
     public void updateChildren(Set<AttackStep> attackSteps) {
-      if (_cacheChildrenCompromise == null) {
-        _cacheChildrenCompromise = new HashSet<>();
+      if (_cacheChildrenReadCredentials == null) {
+        _cacheChildrenReadCredentials = new HashSet<>();
         if (account != null) {
-          _cacheChildrenCompromise.add(account.compromise);
+          _cacheChildrenReadCredentials.add(account.compromise);
         }
       }
-      for (AttackStep attackStep : _cacheChildrenCompromise) {
+      for (AttackStep attackStep : _cacheChildrenReadCredentials) {
         attackStep.updateTtc(this, ttc, attackSteps);
       }
     }
@@ -146,63 +137,74 @@ public class Credentials extends Asset {
     @Override
     public void setExpectedParents() {
       super.setExpectedParents();
-      if (_cacheParentCompromise == null) {
-        _cacheParentCompromise = new HashSet<>();
+      if (_cacheParentReadCredentials == null) {
+        _cacheParentReadCredentials = new HashSet<>();
         if (database != null) {
-          _cacheParentCompromise.add(database.modifyUserInfo);
+          _cacheParentReadCredentials.add(database.readUserInfo);
         }
       }
-      for (AttackStep attackStep : _cacheParentCompromise) {
+      for (AttackStep attackStep : _cacheParentReadCredentials) {
         addExpectedParent(attackStep);
       }
     }
 
     @Override
     public double localTtc() {
-      return ttcHashMap.get("Credentials.compromise");
+      return ttcHashMap.get("Credentials.readCredentials");
     }
   }
 
-  public class Access extends AttackStepMin {
-    private Set<AttackStep> _cacheChildrenAccess;
+  public class RemoveCredentials extends AttackStepMin {
+    private Set<AttackStep> _cacheParentRemoveCredentials;
 
-    private Set<AttackStep> _cacheParentAccess;
-
-    public Access(String name) {
+    public RemoveCredentials(String name) {
       super(name);
-    }
-
-    @Override
-    public void updateChildren(Set<AttackStep> attackSteps) {
-      if (_cacheChildrenAccess == null) {
-        _cacheChildrenAccess = new HashSet<>();
-        if (account != null) {
-          _cacheChildrenAccess.add(account.compromise);
-        }
-      }
-      for (AttackStep attackStep : _cacheChildrenAccess) {
-        attackStep.updateTtc(this, ttc, attackSteps);
-      }
     }
 
     @Override
     public void setExpectedParents() {
       super.setExpectedParents();
-      if (_cacheParentAccess == null) {
-        _cacheParentAccess = new HashSet<>();
+      if (_cacheParentRemoveCredentials == null) {
+        _cacheParentRemoveCredentials = new HashSet<>();
         if (database != null) {
-          _cacheParentAccess.add(database.userInfo);
+          _cacheParentRemoveCredentials.add(database.deleteUserInfo);
         }
-        _cacheParentAccess.add(createCredentials);
       }
-      for (AttackStep attackStep : _cacheParentAccess) {
+      for (AttackStep attackStep : _cacheParentRemoveCredentials) {
         addExpectedParent(attackStep);
       }
     }
 
     @Override
     public double localTtc() {
-      return ttcHashMap.get("Credentials.access");
+      return ttcHashMap.get("Credentials.removeCredentials");
+    }
+  }
+
+  public class ModifyCredentials extends AttackStepMin {
+    private Set<AttackStep> _cacheParentModifyCredentials;
+
+    public ModifyCredentials(String name) {
+      super(name);
+    }
+
+    @Override
+    public void setExpectedParents() {
+      super.setExpectedParents();
+      if (_cacheParentModifyCredentials == null) {
+        _cacheParentModifyCredentials = new HashSet<>();
+        if (database != null) {
+          _cacheParentModifyCredentials.add(database.modifyUserInfo);
+        }
+      }
+      for (AttackStep attackStep : _cacheParentModifyCredentials) {
+        addExpectedParent(attackStep);
+      }
+    }
+
+    @Override
+    public double localTtc() {
+      return ttcHashMap.get("Credentials.modifyCredentials");
     }
   }
 }

@@ -11,7 +11,7 @@ import java.util.Set;
 public class User extends Asset {
   public Phishing phishing;
 
-  public LoginRequest loginRequest;
+  public AccountCompromised accountCompromised;
 
   public Set<Account> account = new HashSet<>();
 
@@ -22,8 +22,8 @@ public class User extends Asset {
     assetClassName = "User";
     AttackStep.allAttackSteps.remove(phishing);
     phishing = new Phishing(name);
-    AttackStep.allAttackSteps.remove(loginRequest);
-    loginRequest = new LoginRequest(name);
+    AttackStep.allAttackSteps.remove(accountCompromised);
+    accountCompromised = new AccountCompromised(name);
   }
 
   public User() {
@@ -95,29 +95,45 @@ public class User extends Asset {
     }
   }
 
-  public class LoginRequest extends AttackStepMin {
-    private Set<AttackStep> _cacheChildrenLoginRequest;
+  public class AccountCompromised extends AttackStepMin {
+    private Set<AttackStep> _cacheChildrenAccountCompromised;
 
-    public LoginRequest(String name) {
+    private Set<AttackStep> _cacheParentAccountCompromised;
+
+    public AccountCompromised(String name) {
       super(name);
     }
 
     @Override
     public void updateChildren(Set<AttackStep> attackSteps) {
-      if (_cacheChildrenLoginRequest == null) {
-        _cacheChildrenLoginRequest = new HashSet<>();
+      if (_cacheChildrenAccountCompromised == null) {
+        _cacheChildrenAccountCompromised = new HashSet<>();
         for (WebPage _0 : webpage) {
-          _cacheChildrenLoginRequest.add(_0.attemptLogin);
+          _cacheChildrenAccountCompromised.add(_0.brokenAccessControlAttack);
         }
       }
-      for (AttackStep attackStep : _cacheChildrenLoginRequest) {
+      for (AttackStep attackStep : _cacheChildrenAccountCompromised) {
         attackStep.updateTtc(this, ttc, attackSteps);
       }
     }
 
     @Override
+    public void setExpectedParents() {
+      super.setExpectedParents();
+      if (_cacheParentAccountCompromised == null) {
+        _cacheParentAccountCompromised = new HashSet<>();
+        for (Account _1 : account) {
+          _cacheParentAccountCompromised.add(_1.compromise);
+        }
+      }
+      for (AttackStep attackStep : _cacheParentAccountCompromised) {
+        addExpectedParent(attackStep);
+      }
+    }
+
+    @Override
     public double localTtc() {
-      return ttcHashMap.get("User.loginRequest");
+      return ttcHashMap.get("User.accountCompromised");
     }
   }
 }

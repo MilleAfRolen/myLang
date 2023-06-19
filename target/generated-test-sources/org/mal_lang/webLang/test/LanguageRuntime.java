@@ -19,7 +19,7 @@ public class LanguageRuntime extends Asset {
 
   public WebServer webserver = null;
 
-  public Set<Dbms> dbms = new HashSet<>();
+  public Dbms dbms = null;
 
   public LanguageRuntime(String name) {
     super(name);
@@ -44,7 +44,7 @@ public class LanguageRuntime extends Asset {
   }
 
   public void addDbms(Dbms dbms) {
-    this.dbms.add(dbms);
+    this.dbms = dbms;
     dbms.runtime = this;
   }
 
@@ -66,7 +66,9 @@ public class LanguageRuntime extends Asset {
         assets.add(webserver);
       }
     } else if (field.equals("dbms")) {
-      assets.addAll(dbms);
+      if (dbms != null) {
+        assets.add(dbms);
+      }
     }
     return assets;
   }
@@ -77,7 +79,9 @@ public class LanguageRuntime extends Asset {
     if (webserver != null) {
       assets.add(webserver);
     }
-    assets.addAll(dbms);
+    if (dbms != null) {
+      assets.add(dbms);
+    }
     return assets;
   }
 
@@ -92,8 +96,8 @@ public class LanguageRuntime extends Asset {
     public void updateChildren(Set<AttackStep> attackSteps) {
       if (_cacheChildrenPostRequest == null) {
         _cacheChildrenPostRequest = new HashSet<>();
-        for (Dbms _0 : dbms) {
-          _cacheChildrenPostRequest.add(_0.create);
+        if (dbms != null) {
+          _cacheChildrenPostRequest.add(dbms.create);
         }
       }
       for (AttackStep attackStep : _cacheChildrenPostRequest) {
@@ -120,8 +124,8 @@ public class LanguageRuntime extends Asset {
     public void updateChildren(Set<AttackStep> attackSteps) {
       if (_cacheChildrenGetRequest == null) {
         _cacheChildrenGetRequest = new HashSet<>();
-        for (Dbms _0 : dbms) {
-          _cacheChildrenGetRequest.add(_0.read);
+        if (dbms != null) {
+          _cacheChildrenGetRequest.add(dbms.read);
         }
       }
       for (AttackStep attackStep : _cacheChildrenGetRequest) {
@@ -163,8 +167,8 @@ public class LanguageRuntime extends Asset {
     public void updateChildren(Set<AttackStep> attackSteps) {
       if (_cacheChildrenPutRequest == null) {
         _cacheChildrenPutRequest = new HashSet<>();
-        for (Dbms _0 : dbms) {
-          _cacheChildrenPutRequest.add(_0.update);
+        if (dbms != null) {
+          _cacheChildrenPutRequest.add(dbms.update);
         }
       }
       for (AttackStep attackStep : _cacheChildrenPutRequest) {
@@ -189,8 +193,8 @@ public class LanguageRuntime extends Asset {
     public void updateChildren(Set<AttackStep> attackSteps) {
       if (_cacheChildrenDeleteRequest == null) {
         _cacheChildrenDeleteRequest = new HashSet<>();
-        for (Dbms _0 : dbms) {
-          _cacheChildrenDeleteRequest.add(_0.delete);
+        if (dbms != null) {
+          _cacheChildrenDeleteRequest.add(dbms.delete);
         }
       }
       for (AttackStep attackStep : _cacheChildrenDeleteRequest) {

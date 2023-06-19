@@ -7,9 +7,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ProtectedResource extends WebResource {
-  public WebServer webserver = null;
+  public WebServer server = null;
 
-  public Set<Account> userAccount = new HashSet<>();
+  public Set<Account> account = new HashSet<>();
 
   public ProtectedResource(String name) {
     super(name);
@@ -20,21 +20,21 @@ public class ProtectedResource extends WebResource {
     this("Anonymous");
   }
 
-  public void addWebserver(WebServer webserver) {
-    this.webserver = webserver;
-    webserver.resource.add(this);
+  public void addServer(WebServer server) {
+    this.server = server;
+    server.resource.add(this);
   }
 
-  public void addUserAccount(Account userAccount) {
-    this.userAccount.add(userAccount);
-    userAccount.resource.add(this);
+  public void addAccount(Account account) {
+    this.account.add(account);
+    account.resource.add(this);
   }
 
   @Override
   public String getAssociatedAssetClassName(String field) {
-    if (field.equals("webserver")) {
+    if (field.equals("server")) {
       return WebServer.class.getName();
-    } else if (field.equals("userAccount")) {
+    } else if (field.equals("account")) {
       return Account.class.getName();
     }
     return "";
@@ -43,12 +43,12 @@ public class ProtectedResource extends WebResource {
   @Override
   public Set<Asset> getAssociatedAssets(String field) {
     Set<Asset> assets = new HashSet<>();
-    if (field.equals("webserver")) {
-      if (webserver != null) {
-        assets.add(webserver);
+    if (field.equals("server")) {
+      if (server != null) {
+        assets.add(server);
       }
-    } else if (field.equals("userAccount")) {
-      assets.addAll(userAccount);
+    } else if (field.equals("account")) {
+      assets.addAll(account);
     }
     return assets;
   }
@@ -56,10 +56,10 @@ public class ProtectedResource extends WebResource {
   @Override
   public Set<Asset> getAllAssociatedAssets() {
     Set<Asset> assets = new HashSet<>();
-    if (webserver != null) {
-      assets.add(webserver);
+    if (server != null) {
+      assets.add(server);
     }
-    assets.addAll(userAccount);
+    assets.addAll(account);
     return assets;
   }
 }

@@ -22,10 +22,9 @@ category softwareStack {
   
  
   asset OperatingSystem {
-    | backdoorAccess
+    
   }
 
-   
   asset WebServer {
     | connect
       -> webpage.access
@@ -34,43 +33,60 @@ category softwareStack {
     | sendMaliciousRequest
       -> runtime.getRequest
     | accessServerScripts
-      -> webResource.access
-    & access
+      -> scripts.access
+    | access
       -> resource.access
   }
 
-  asset WebPage extends WebResource {
+  asset WebPage {
+    | access
+      -> attemptLogin,
+         attemptBrokenAccessControlAttack
+
     | attemptLogin
       -> webserver.authenticateUser
-    | inspectScripts
-      -> webserver.accessServerScripts,      //Gets access and reads scripts available on site
-         attemptBrokenAccessControlAttack   //Finds URI path to administration section of website
+    | attemptBrokenAccessControlAttack
+      -> inspectScripts,
+         attemptInjectionAttack
+
+    E ifScriptsAvailable
+      <- webserver.scripts
+      -> inspectScripts
+    & inspectScripts
+      -> webserver.accessServerScripts,       //Gets access and reads scripts available on site
+         brokenAccessControlAttack            //Finds URI path to administration section of website
 
     | attemptInjectionAttack
-      -> webserver.sendMaliciousRequest,    //SQLInject to get access to admin account
-         attemptBrokenAccessControlAttack   //Admin account can get access to administration section of website
+      -> webserver.sendMaliciousRequest,      //SQLInject to get access to admin account
+         brokenAccessControlAttack            //Admin account can get access to administration section of website
 
-    & attemptBrokenAccessControlAttack
-      -> webserver.access                   //Access administration section
+    E ifCompromisedAccountHasProtectedResource
+      <- user.account.resource
+      -> brokenAccessControlAttack
+    & brokenAccessControlAttack
+      -> webserver.access                     //Access administration section
   }
 
   asset Dbms {
     | create
       -> database.createUserInfo
     | read
-      -> database.userInfo
+      -> database.readUserInfo
     | update
       -> database.modifyUserInfo
     | delete
+      -> database.deleteUserInfo
   }
 
   asset Database {
     | createUserInfo
       -> credentials.createCredentials
-    | userInfo
-      -> credentials.access
+    | readUserInfo
+      -> credentials.readCredentials
     | modifyUserInfo
-      -> credentials.compromise
+      -> credentials.modifyCredentials
+    | deleteUserInfo
+      -> credentials.removeCredentials
   }
 
   asset LanguageRuntime {
@@ -92,7 +108,11 @@ category Resources {
 
   }
 
-  asset WebResource {
+  asset ScriptResource extends WebResource {
+
+  }
+
+  abstract asset WebResource {
     | access
   }
 }
@@ -101,13 +121,13 @@ category Resources {
   asset User {
     | phishing
       -> account.compromise
-    | loginRequest
-      -> webpage.attemptLogin
+    | accountCompromised
+      -> webpage.brokenAccessControlAttack
   }
 
   asset Account {
     | compromise
-      -> resource.access
+      -> user.accountCompromised
   }
  }
 
@@ -115,27 +135,26 @@ category Credentials {
 
   asset Credentials {
     | createCredentials
-      -> access
-    | compromise
+    | readCredentials
       -> account.compromise
-    | access
-      -> account.compromise
+    | removeCredentials
+    | modifyCredentials
   }
  }
 
 
 
 associations {
-  OperatingSystem [os] 1 <-- runs --> 1 [webserver] WebServer
+  OperatingSystem [os] 1 <-- runs --> * [webserver] WebServer
   WebServer [webserver] 1 <-- executes --> * [runtime] LanguageRuntime
-  WebServer [webserver] 1 <-- responses --> * [webpage] WebPage
-  WebServer [webserver] 1 <-- uses --> * [resource] ProtectedResource
-  WebServer [server] 1 <-- uses --> * [webResource] WebResource
-  LanguageRuntime [runtime] 1 <-- uses --> * [dbms] Dbms
+  WebServer [webserver] 1 <-- responds --> * [webpage] WebPage
+  WebServer [server] 1 <-- uses --> * [resource] ProtectedResource
+  WebServer [webserver] 1 <-- uses --> * [scripts] ScriptResource
+  LanguageRuntime [runtime] 1 <-- utilizes --> 1 [dbms] Dbms
   Dbms [dbms] 1 <-- queries --> * [database] Database
   Credentials [credentials] 1 <-- authenticates --> 1 [account] Account
-  Account [userAccount] * <-- accesses --> * [resource] ProtectedResource
-  User [user] 1 <-- has --> * [account] Account
+  Account [account] * <-- accesses --> 0..* [resource] ProtectedResource
+  User [user] 1 <-- has --> 0..* [account] Account
   User [user] * <-- interacts --> * [webpage] WebPage
   Database [database] 1 <-- stores --> * [credentials] Credentials
 }

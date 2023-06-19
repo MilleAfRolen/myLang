@@ -35,7 +35,7 @@ public class Account extends Asset {
 
   public void addResource(ProtectedResource resource) {
     this.resource.add(resource);
-    resource.userAccount.add(this);
+    resource.account.add(this);
   }
 
   public void addUser(User user) {
@@ -98,8 +98,8 @@ public class Account extends Asset {
     public void updateChildren(Set<AttackStep> attackSteps) {
       if (_cacheChildrenCompromise == null) {
         _cacheChildrenCompromise = new HashSet<>();
-        for (ProtectedResource _0 : resource) {
-          _cacheChildrenCompromise.add(_0.access);
+        if (user != null) {
+          _cacheChildrenCompromise.add(user.accountCompromised);
         }
       }
       for (AttackStep attackStep : _cacheChildrenCompromise) {
@@ -116,10 +116,7 @@ public class Account extends Asset {
           _cacheParentCompromise.add(user.phishing);
         }
         if (credentials != null) {
-          _cacheParentCompromise.add(credentials.compromise);
-        }
-        if (credentials != null) {
-          _cacheParentCompromise.add(credentials.access);
+          _cacheParentCompromise.add(credentials.readCredentials);
         }
       }
       for (AttackStep attackStep : _cacheParentCompromise) {
