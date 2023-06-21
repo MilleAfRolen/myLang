@@ -8,6 +8,7 @@ WebPage.attemptLogin = Zero
 WebPage.attemptBrokenAccessControlAttack = Zero
 WebPage.ifScriptsAvailable = Zero
 WebPage.inspectScripts = Zero
+WebPage.inputValidation = Zero
 WebPage.attemptInjectionAttack = Zero
 WebPage.ifCompromisedAccountHasProtectedResource = Zero
 WebPage.brokenAccessControlAttack = Zero

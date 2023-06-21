@@ -5,6 +5,7 @@ import core.AttackStep;
 import core.AttackStepMax;
 import core.AttackStepMin;
 import core.Defense;
+import java.lang.Boolean;
 import java.lang.Override;
 import java.lang.String;
 import java.util.HashSet;
@@ -21,6 +22,8 @@ public class WebPage extends Asset {
 
   public InspectScripts inspectScripts;
 
+  public InputValidation inputValidation;
+
   public AttemptInjectionAttack attemptInjectionAttack;
 
   public IfCompromisedAccountHasProtectedResource ifCompromisedAccountHasProtectedResource;
@@ -30,6 +33,38 @@ public class WebPage extends Asset {
   public WebServer webserver = null;
 
   public Set<User> user = new HashSet<>();
+
+  public WebPage(String name, boolean isInputValidationEnabled) {
+    super(name);
+    assetClassName = "WebPage";
+    AttackStep.allAttackSteps.remove(access);
+    access = new Access(name);
+    AttackStep.allAttackSteps.remove(attemptLogin);
+    attemptLogin = new AttemptLogin(name);
+    AttackStep.allAttackSteps.remove(attemptBrokenAccessControlAttack);
+    attemptBrokenAccessControlAttack = new AttemptBrokenAccessControlAttack(name);
+    if (ifScriptsAvailable != null) {
+      AttackStep.allAttackSteps.remove(ifScriptsAvailable.disable);
+    }
+    Defense.allDefenses.remove(ifScriptsAvailable);
+    ifScriptsAvailable = new IfScriptsAvailable(name);
+    AttackStep.allAttackSteps.remove(inspectScripts);
+    inspectScripts = new InspectScripts(name);
+    if (inputValidation != null) {
+      AttackStep.allAttackSteps.remove(inputValidation.disable);
+    }
+    Defense.allDefenses.remove(inputValidation);
+    inputValidation = new InputValidation(name, isInputValidationEnabled);
+    AttackStep.allAttackSteps.remove(attemptInjectionAttack);
+    attemptInjectionAttack = new AttemptInjectionAttack(name);
+    if (ifCompromisedAccountHasProtectedResource != null) {
+      AttackStep.allAttackSteps.remove(ifCompromisedAccountHasProtectedResource.disable);
+    }
+    Defense.allDefenses.remove(ifCompromisedAccountHasProtectedResource);
+    ifCompromisedAccountHasProtectedResource = new IfCompromisedAccountHasProtectedResource(name);
+    AttackStep.allAttackSteps.remove(brokenAccessControlAttack);
+    brokenAccessControlAttack = new BrokenAccessControlAttack(name);
+  }
 
   public WebPage(String name) {
     super(name);
@@ -47,6 +82,11 @@ public class WebPage extends Asset {
     ifScriptsAvailable = new IfScriptsAvailable(name);
     AttackStep.allAttackSteps.remove(inspectScripts);
     inspectScripts = new InspectScripts(name);
+    if (inputValidation != null) {
+      AttackStep.allAttackSteps.remove(inputValidation.disable);
+    }
+    Defense.allDefenses.remove(inputValidation);
+    inputValidation = new InputValidation(name, false);
     AttackStep.allAttackSteps.remove(attemptInjectionAttack);
     attemptInjectionAttack = new AttemptInjectionAttack(name);
     if (ifCompromisedAccountHasProtectedResource != null) {
@@ -56,6 +96,10 @@ public class WebPage extends Asset {
     ifCompromisedAccountHasProtectedResource = new IfCompromisedAccountHasProtectedResource(name);
     AttackStep.allAttackSteps.remove(brokenAccessControlAttack);
     brokenAccessControlAttack = new BrokenAccessControlAttack(name);
+  }
+
+  public WebPage(boolean isInputValidationEnabled) {
+    this("Anonymous", isInputValidationEnabled);
   }
 
   public WebPage() {
@@ -305,6 +349,44 @@ public class WebPage extends Asset {
     @Override
     public double localTtc() {
       return ttcHashMap.get("WebPage.inspectScripts");
+    }
+  }
+
+  public class InputValidation extends Defense {
+    public InputValidation(String name) {
+      this(name, false);
+    }
+
+    public InputValidation(String name, Boolean isEnabled) {
+      super(name);
+      defaultValue = isEnabled;
+      disable = new Disable(name);
+    }
+
+    public class Disable extends AttackStepMin {
+      private Set<AttackStep> _cacheChildrenInputValidation;
+
+      public Disable(String name) {
+        super(name);
+      }
+
+      @Override
+      public void updateChildren(Set<AttackStep> attackSteps) {
+        if (_cacheChildrenInputValidation == null) {
+          _cacheChildrenInputValidation = new HashSet<>();
+          if (webserver != null) {
+            _cacheChildrenInputValidation.add(webserver.sendMaliciousRequest);
+          }
+        }
+        for (AttackStep attackStep : _cacheChildrenInputValidation) {
+          attackStep.updateTtc(this, ttc, attackSteps);
+        }
+      }
+
+      @Override
+      public String fullName() {
+        return "WebPage.inputValidation";
+      }
     }
   }
 

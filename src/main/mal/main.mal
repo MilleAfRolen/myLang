@@ -30,7 +30,7 @@ category softwareStack {
       -> webpage.access
     | authenticateUser
       -> runtime.getRequest
-    | sendMaliciousRequest
+    & sendMaliciousRequest
       -> runtime.getRequest
     | accessServerScripts
       -> scripts.access
@@ -55,6 +55,9 @@ category softwareStack {
     & inspectScripts
       -> webserver.accessServerScripts,       //Gets access and reads scripts available on site
          brokenAccessControlAttack            //Finds URI path to administration section of website
+
+    # inputValidation
+      -> webserver.sendMaliciousRequest
 
     | attemptInjectionAttack
       -> webserver.sendMaliciousRequest,      //SQLInject to get access to admin account

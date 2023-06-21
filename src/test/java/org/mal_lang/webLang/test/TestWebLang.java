@@ -26,7 +26,7 @@ public class TestWebLang {
 		public final LanguageRuntime sequelize = new LanguageRuntime("Sequalize");
 		public final Dbms SQLite = new Dbms("SQLite");
 		public final Dbms mongoDB = new Dbms("MongoDB");
-		public final WebPage angularjs = new WebPage("Angular");
+		public final WebPage angularjs = new WebPage("Angular", false);
 		public final Database mongoDatabase = new Database("MongoDatabase");
 		public final Database sqLiteDatabase = new Database("SQLiteDatabase");
 

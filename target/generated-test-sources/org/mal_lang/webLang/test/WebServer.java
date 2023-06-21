@@ -2,6 +2,7 @@ package org.mal_lang.webLang.test;
 
 import core.Asset;
 import core.AttackStep;
+import core.AttackStepMax;
 import core.AttackStepMin;
 import java.lang.Override;
 import java.lang.String;
@@ -189,7 +190,7 @@ public class WebServer extends Asset {
     }
   }
 
-  public class SendMaliciousRequest extends AttackStepMin {
+  public class SendMaliciousRequest extends AttackStepMax {
     private Set<AttackStep> _cacheChildrenSendMaliciousRequest;
 
     private Set<AttackStep> _cacheParentSendMaliciousRequest;
@@ -217,7 +218,10 @@ public class WebServer extends Asset {
       if (_cacheParentSendMaliciousRequest == null) {
         _cacheParentSendMaliciousRequest = new HashSet<>();
         for (WebPage _1 : webpage) {
-          _cacheParentSendMaliciousRequest.add(_1.attemptInjectionAttack);
+          _cacheParentSendMaliciousRequest.add(_1.inputValidation.disable);
+        }
+        for (WebPage _2 : webpage) {
+          _cacheParentSendMaliciousRequest.add(_2.attemptInjectionAttack);
         }
       }
       for (AttackStep attackStep : _cacheParentSendMaliciousRequest) {
