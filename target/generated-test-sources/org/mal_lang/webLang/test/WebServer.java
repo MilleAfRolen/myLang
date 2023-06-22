@@ -206,6 +206,9 @@ public class WebServer extends Asset {
         for (LanguageRuntime _0 : runtime) {
           _cacheChildrenSendMaliciousRequest.add(_0.getRequest);
         }
+        for (WebPage _1 : webpage) {
+          _cacheChildrenSendMaliciousRequest.add(_1.brokenAccessControlAttack);
+        }
       }
       for (AttackStep attackStep : _cacheChildrenSendMaliciousRequest) {
         attackStep.updateTtc(this, ttc, attackSteps);
@@ -217,11 +220,11 @@ public class WebServer extends Asset {
       super.setExpectedParents();
       if (_cacheParentSendMaliciousRequest == null) {
         _cacheParentSendMaliciousRequest = new HashSet<>();
-        for (WebPage _1 : webpage) {
-          _cacheParentSendMaliciousRequest.add(_1.inputValidation.disable);
-        }
         for (WebPage _2 : webpage) {
-          _cacheParentSendMaliciousRequest.add(_2.attemptInjectionAttack);
+          _cacheParentSendMaliciousRequest.add(_2.inputValidation.disable);
+        }
+        for (WebPage _3 : webpage) {
+          _cacheParentSendMaliciousRequest.add(_3.attemptInjectionAttack);
         }
       }
       for (AttackStep attackStep : _cacheParentSendMaliciousRequest) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="org.mal_lang.webLang.test.TestWebLang" time="0.042" tests="3" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="org.mal_lang.webLang.test.TestWebLang" time="0.056" tests="4" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="20"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -12,7 +12,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="SE"/>
     <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/20.0.1/libexec/openjdk.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/milleafrolen/kth/kexjob/myLang/target/surefire/surefirebooter8845064277687406846.jar /Users/milleafrolen/kth/kexjob/myLang/target/surefire 2023-06-21T20-30-03_105-jvmRun1 surefire3528089286625347292tmp surefire_010487258537763915982tmp"/>
+    <property name="sun.java.command" value="/Users/milleafrolen/kth/kexjob/myLang/target/surefire/surefirebooter9215217114204978012.jar /Users/milleafrolen/kth/kexjob/myLang/target/surefire 2023-06-22T20-44-50_155-jvmRun1 surefire7665064319332610823tmp surefire_015231838359005214929tmp"/>
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/Users/milleafrolen/kth/kexjob/myLang/target/test-classes:/Users/milleafrolen/kth/kexjob/myLang/target/classes:/Users/milleafrolen/.m2/repository/org/junit/jupiter/junit-jupiter/5.8.2/junit-jupiter-5.8.2.jar:/Users/milleafrolen/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.8.2/junit-jupiter-api-5.8.2.jar:/Users/milleafrolen/.m2/repository/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar:/Users/milleafrolen/.m2/repository/org/junit/platform/junit-platform-commons/1.8.2/junit-platform-commons-1.8.2.jar:/Users/milleafrolen/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/milleafrolen/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.8.2/junit-jupiter-params-5.8.2.jar:/Users/milleafrolen/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.8.2/junit-jupiter-engine-5.8.2.jar:/Users/milleafrolen/.m2/repository/org/junit/platform/junit-platform-engine/1.8.2/junit-platform-engine-1.8.2.jar:"/>
@@ -29,7 +29,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Users/milleafrolen/kth/kexjob/myLang/target/surefire/surefirebooter8845064277687406846.jar"/>
+    <property name="surefire.real.class.path" value="/Users/milleafrolen/kth/kexjob/myLang/target/surefire/surefirebooter9215217114204978012.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.runtime.version" value="20.0.1"/>
@@ -77,20 +77,40 @@
 + Angular.brokenAccessControlAttack was reached instantaneously from user.accountCompromised as expected.
 + Angular.brokenAccessControlAttack was reached instantaneously from Angular.attemptInjectionAttack as expected.
 + Expressjs.access was reached instantaneously as expected.
-+ adminSection.access was reached instantaneously from Expressjs.access as expected.
-+ adminSection.access was reached instantaneously from Expressjs.accessServerScripts as expected.
++ AdminSection.access was reached instantaneously from Expressjs.access as expected.
++ AdminSection.access was reached instantaneously from Expressjs.accessServerScripts as expected.
 ]]></system-out>
   </testcase>
-  <testcase name="testAdminSectionWithoutAdminAccount" classname="org.mal_lang.webLang.test.TestWebLang" time="0.003">
+  <testcase name="testInputValidation" classname="org.mal_lang.webLang.test.TestWebLang" time="0.004">
+    <system-out><![CDATA[Try to access Admin Section when input validation exists
++ Angular.access was reached instantaneously as expected.
++ Angular.attemptBrokenAccessControlAttack was reached instantaneously as expected.
++ Angular.inspectScripts was reached instantaneously as expected.
++ Expressjs.accessServerScripts was reached instantaneously as expected.
++ Scripts.access was reached instantaneously from Expressjs.accessServerScripts as expected.
++ Angular.attemptInjectionAttack was reached instantaneously as expected.
++ Expressjs.sendMaliciousRequest was not reached, as expected.
++ Angular.brokenAccessControlAttack was not reached, as expected.
+]]></system-out>
+  </testcase>
+  <testcase name="testAdminSectionWithoutAdminAccount" classname="org.mal_lang.webLang.test.TestWebLang" time="0.002">
     <system-out><![CDATA[Try to access Admin Section without admin account
 + Angular.access was reached instantaneously as expected.
 + Angular.attemptBrokenAccessControlAttack was reached instantaneously as expected.
 + Angular.inspectScripts was reached instantaneously as expected.
 + Expressjs.accessServerScripts was reached instantaneously as expected.
 + Scripts.access was reached instantaneously from Expressjs.accessServerScripts as expected.
++ Angular.attemptInjectionAttack was reached instantaneously as expected.
++ Expressjs.sendMaliciousRequest was reached instantaneously as expected.
++ Sequalize.getRequest was reached instantaneously from Expressjs.sendMaliciousRequest as expected.
++ SQLite.read was reached instantaneously as expected.
++ SQLiteDatabase.readUserInfo was reached instantaneously as expected.
++ adminCredentials.readCredentials was reached instantaneously as expected.
++ admin.compromise was reached instantaneously from adminCredentials.readCredentials as expected.
++ user.accountCompromised was reached instantaneously as expected.
 + Angular.brokenAccessControlAttack was not reached, as expected.
 + Expressjs.access was not reached, as expected.
-+ adminSection.access was not reached, as expected.
++ AdminSection.access was not reached, as expected.
 ]]></system-out>
   </testcase>
   <testcase name="testAdminSectionWithoutPath" classname="org.mal_lang.webLang.test.TestWebLang" time="0.002">
@@ -107,7 +127,7 @@
 + user.accountCompromised was reached instantaneously as expected.
 + Angular.brokenAccessControlAttack was not reached, as expected.
 + Expressjs.access was not reached, as expected.
-+ adminSection.access was not reached, as expected.
++ AdminSection.access was not reached, as expected.
 ]]></system-out>
   </testcase>
 </testsuite>

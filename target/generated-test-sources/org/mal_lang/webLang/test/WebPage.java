@@ -406,7 +406,6 @@ public class WebPage extends Asset {
         if (webserver != null) {
           _cacheChildrenAttemptInjectionAttack.add(webserver.sendMaliciousRequest);
         }
-        _cacheChildrenAttemptInjectionAttack.add(brokenAccessControlAttack);
       }
       for (AttackStep attackStep : _cacheChildrenAttemptInjectionAttack) {
         attackStep.updateTtc(this, ttc, attackSteps);
@@ -501,8 +500,10 @@ public class WebPage extends Asset {
       super.setExpectedParents();
       if (_cacheParentBrokenAccessControlAttack == null) {
         _cacheParentBrokenAccessControlAttack = new HashSet<>();
+        if (webserver != null) {
+          _cacheParentBrokenAccessControlAttack.add(webserver.sendMaliciousRequest);
+        }
         _cacheParentBrokenAccessControlAttack.add(inspectScripts);
-        _cacheParentBrokenAccessControlAttack.add(attemptInjectionAttack);
         _cacheParentBrokenAccessControlAttack.add(ifCompromisedAccountHasProtectedResource.disable);
         for (User _0 : user) {
           _cacheParentBrokenAccessControlAttack.add(_0.accountCompromised);

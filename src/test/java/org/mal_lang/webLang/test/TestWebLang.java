@@ -16,9 +16,11 @@ public class TestWebLang {
 	private class OwaspModel {
 
 		public final User user = new User("user");
-		public Account account;
-		public final Credentials credentials = new Credentials("adminCredentials");
-		public final ProtectedResource adminSection = new ProtectedResource("adminSection");
+		public final ProtectedResource adminSection = new ProtectedResource("AdminSection");
+		
+				
+		public Credentials credentials = new Credentials("adminCredentials");
+		public Account account = new Account("admin");
 		public ScriptResource scripts;
 
 		public final WebServer expressjs = new WebServer("Expressjs");
@@ -26,11 +28,22 @@ public class TestWebLang {
 		public final LanguageRuntime sequelize = new LanguageRuntime("Sequalize");
 		public final Dbms SQLite = new Dbms("SQLite");
 		public final Dbms mongoDB = new Dbms("MongoDB");
-		public final WebPage angularjs = new WebPage("Angular", false);
+		public WebPage angularjs = new WebPage("Angular", false);
 		public final Database mongoDatabase = new Database("MongoDatabase");
 		public final Database sqLiteDatabase = new Database("SQLiteDatabase");
 
-		public OwaspModel(boolean adminAccountExists, boolean scriptsExists) {
+		public OwaspModel(boolean accountHasProtectedResource, boolean scriptsExist, boolean inputValidationExists) {
+			if (accountHasProtectedResource) {
+				account.addResource(adminSection);
+			}
+			if (scriptsExist) {
+				scripts = new ScriptResource("Scripts");
+				expressjs.addScripts(scripts);
+			}
+			if (inputValidationExists) {
+				angularjs = new WebPage("Angular", true);
+			}
+
 			expressjs.addRuntime(nodejs);
 			expressjs.addRuntime(sequelize);
 			expressjs.addWebpage(angularjs);
@@ -40,30 +53,21 @@ public class TestWebLang {
 			SQLite.addDatabase(sqLiteDatabase);
 			mongoDB.addDatabase(mongoDatabase);
 			angularjs.addUser(user);
+			credentials.addAccount(account);
+			user.addAccount(account);
 			sqLiteDatabase.addCredentials(credentials);
-
-			if (adminAccountExists) {
-				account = new Account("admin");
-				credentials.addAccount(account);
-				user.addAccount(account);
-				account.addResource(adminSection);
-			}
-			if (scriptsExists) {
-				scripts = new ScriptResource("Scripts");
-				expressjs.addScripts(scripts);
-			}
+			
 		}
 	}
 
 	@Test
 	public void testAdminSection() {
 		System.out.println("Try to access Admin Section");
-		OwaspModel juiceshop = new OwaspModel(true, true);
+		OwaspModel juiceshop = new OwaspModel(true, true, false);
 
 		Attacker attacker = new Attacker();
 		attacker.addAttackPoint(juiceshop.expressjs.connect);
 		attacker.attack();
-
 
 		juiceshop.angularjs.access.assertCompromisedInstantaneously();
 		juiceshop.angularjs.attemptBrokenAccessControlAttack.assertCompromisedInstantaneously();
@@ -92,7 +96,7 @@ public class TestWebLang {
 	@Test
 	public void testAdminSectionWithoutAdminAccount() {
 		System.out.println("Try to access Admin Section without admin account");
-		OwaspModel juiceshop = new OwaspModel(false, true);
+		OwaspModel juiceshop = new OwaspModel(false, true, false);
 
 		Attacker attacker = new Attacker();
 		attacker.addAttackPoint(juiceshop.expressjs.connect);
@@ -104,6 +108,15 @@ public class TestWebLang {
 		juiceshop.expressjs.accessServerScripts.assertCompromisedInstantaneously();
 		juiceshop.scripts.access.assertCompromisedInstantaneouslyFrom(juiceshop.expressjs.accessServerScripts);
 
+		juiceshop.angularjs.attemptInjectionAttack.assertCompromisedInstantaneously();
+		juiceshop.expressjs.sendMaliciousRequest.assertCompromisedInstantaneously();
+		juiceshop.sequelize.getRequest.assertCompromisedInstantaneouslyFrom(juiceshop.expressjs.sendMaliciousRequest);
+		juiceshop.SQLite.read.assertCompromisedInstantaneously();
+		juiceshop.sqLiteDatabase.readUserInfo.assertCompromisedInstantaneously();
+		juiceshop.credentials.readCredentials.assertCompromisedInstantaneously();
+		juiceshop.account.compromise.assertCompromisedInstantaneouslyFrom(juiceshop.credentials.readCredentials);
+		juiceshop.user.accountCompromised.assertCompromisedInstantaneously();
+
 		juiceshop.angularjs.brokenAccessControlAttack.assertUncompromised();
 		juiceshop.expressjs.access.assertUncompromised();
 		juiceshop.adminSection.access.assertUncompromised();
@@ -113,7 +126,7 @@ public class TestWebLang {
 	@Test
 	public void testAdminSectionWithoutPath() {
 		System.out.println("Try to access Admin Section when scripts are unavailable");
-		OwaspModel juiceshop = new OwaspModel(true, false);
+		OwaspModel juiceshop = new OwaspModel(true, false, false);
 
 		Attacker attacker = new Attacker();
 		attacker.addAttackPoint(juiceshop.expressjs.connect);
@@ -134,6 +147,28 @@ public class TestWebLang {
 		juiceshop.expressjs.access.assertUncompromised();
 		juiceshop.adminSection.access.assertUncompromised();
 	}
+
+	@Test
+	public void testInputValidation() {
+		System.out.println("Try to access Admin Section when input validation exists");
+		OwaspModel juiceshop = new OwaspModel(true, true, true);
+
+		Attacker attacker = new Attacker();
+		attacker.addAttackPoint(juiceshop.expressjs.connect);
+		attacker.attack();
+
+		juiceshop.angularjs.access.assertCompromisedInstantaneously();
+		juiceshop.angularjs.attemptBrokenAccessControlAttack.assertCompromisedInstantaneously();
+		juiceshop.angularjs.inspectScripts.assertCompromisedInstantaneously();
+		juiceshop.expressjs.accessServerScripts.assertCompromisedInstantaneously();
+		juiceshop.scripts.access.assertCompromisedInstantaneouslyFrom(juiceshop.expressjs.accessServerScripts);
+
+		juiceshop.angularjs.attemptInjectionAttack.assertCompromisedInstantaneously();
+		juiceshop.expressjs.sendMaliciousRequest.assertUncompromised();
+
+		juiceshop.angularjs.brokenAccessControlAttack.assertUncompromised();
+	}
+
 
 
 	@AfterEach

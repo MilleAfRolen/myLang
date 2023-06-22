@@ -31,7 +31,8 @@ category softwareStack {
     | authenticateUser
       -> runtime.getRequest
     & sendMaliciousRequest
-      -> runtime.getRequest
+      -> runtime.getRequest,
+         webpage.brokenAccessControlAttack
     | accessServerScripts
       -> scripts.access
     | access
@@ -60,8 +61,7 @@ category softwareStack {
       -> webserver.sendMaliciousRequest
 
     | attemptInjectionAttack
-      -> webserver.sendMaliciousRequest,      //SQLInject to get access to admin account
-         brokenAccessControlAttack            //Admin account can get access to administration section of website
+      -> webserver.sendMaliciousRequest
 
     E ifCompromisedAccountHasProtectedResource
       <- user.account.resource
