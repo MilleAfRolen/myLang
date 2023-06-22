@@ -71,36 +71,36 @@ category softwareStack {
   }
 
   asset Dbms {
-    | create
-      -> database.createUserInfo
+    // | create
+    //   -> database.createUserInfo
     | read
       -> database.readUserInfo
-    | update
-      -> database.modifyUserInfo
-    | delete
-      -> database.deleteUserInfo
+    // | update
+    //   -> database.modifyUserInfo
+    // | delete
+    //   -> database.deleteUserInfo
   }
 
   asset Database {
-    | createUserInfo
-      -> credentials.createCredentials
+    // | createUserInfo
+    //   -> credentials.createCredentials
     | readUserInfo
       -> credentials.readCredentials
-    | modifyUserInfo
-      -> credentials.modifyCredentials
-    | deleteUserInfo
-      -> credentials.removeCredentials
+    // | modifyUserInfo
+    //   -> credentials.modifyCredentials
+    // | deleteUserInfo
+    //   -> credentials.removeCredentials
   }
 
   asset LanguageRuntime {
-    | postRequest
-      -> dbms.create
+    // | postRequest
+    //   -> dbms.create
     | getRequest
       -> dbms.read
-    | putRequest
-      -> dbms.update
-    | deleteRequest
-      -> dbms.delete
+    // | putRequest
+    //   -> dbms.update
+    // | deleteRequest
+    //   -> dbms.delete
   }
 }
 
@@ -137,11 +137,11 @@ category Resources {
 category Credentials {
 
   asset Credentials {
-    | createCredentials
+    // | createCredentials
     | readCredentials
       -> account.compromise
-    | removeCredentials
-    | modifyCredentials
+    // | removeCredentials
+    // | modifyCredentials
   }
  }
 
@@ -151,8 +151,8 @@ associations {
   OperatingSystem [os] 1 <-- runs --> * [webserver] WebServer
   WebServer [webserver] 1 <-- executes --> * [runtime] LanguageRuntime
   WebServer [webserver] 1 <-- responds --> * [webpage] WebPage
-  WebServer [server] 1 <-- uses --> * [resource] ProtectedResource
-  WebServer [webserver] 1 <-- uses --> * [scripts] ScriptResource
+  WebServer [server] 1 <-- uses --> 0..* [resource] ProtectedResource
+  WebServer [webserver] 1 <-- uses --> 0..* [scripts] ScriptResource
   LanguageRuntime [runtime] 1 <-- utilizes --> 1 [dbms] Dbms
   Dbms [dbms] 1 <-- queries --> * [database] Database
   Credentials [credentials] 1 <-- authenticates --> 1 [account] Account

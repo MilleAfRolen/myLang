@@ -9,13 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Database extends Asset {
-  public CreateUserInfo createUserInfo;
-
   public ReadUserInfo readUserInfo;
-
-  public ModifyUserInfo modifyUserInfo;
-
-  public DeleteUserInfo deleteUserInfo;
 
   public Dbms dbms = null;
 
@@ -24,14 +18,8 @@ public class Database extends Asset {
   public Database(String name) {
     super(name);
     assetClassName = "Database";
-    AttackStep.allAttackSteps.remove(createUserInfo);
-    createUserInfo = new CreateUserInfo(name);
     AttackStep.allAttackSteps.remove(readUserInfo);
     readUserInfo = new ReadUserInfo(name);
-    AttackStep.allAttackSteps.remove(modifyUserInfo);
-    modifyUserInfo = new ModifyUserInfo(name);
-    AttackStep.allAttackSteps.remove(deleteUserInfo);
-    deleteUserInfo = new DeleteUserInfo(name);
   }
 
   public Database() {
@@ -81,48 +69,6 @@ public class Database extends Asset {
     return assets;
   }
 
-  public class CreateUserInfo extends AttackStepMin {
-    private Set<AttackStep> _cacheChildrenCreateUserInfo;
-
-    private Set<AttackStep> _cacheParentCreateUserInfo;
-
-    public CreateUserInfo(String name) {
-      super(name);
-    }
-
-    @Override
-    public void updateChildren(Set<AttackStep> attackSteps) {
-      if (_cacheChildrenCreateUserInfo == null) {
-        _cacheChildrenCreateUserInfo = new HashSet<>();
-        for (Credentials _0 : credentials) {
-          _cacheChildrenCreateUserInfo.add(_0.createCredentials);
-        }
-      }
-      for (AttackStep attackStep : _cacheChildrenCreateUserInfo) {
-        attackStep.updateTtc(this, ttc, attackSteps);
-      }
-    }
-
-    @Override
-    public void setExpectedParents() {
-      super.setExpectedParents();
-      if (_cacheParentCreateUserInfo == null) {
-        _cacheParentCreateUserInfo = new HashSet<>();
-        if (dbms != null) {
-          _cacheParentCreateUserInfo.add(dbms.create);
-        }
-      }
-      for (AttackStep attackStep : _cacheParentCreateUserInfo) {
-        addExpectedParent(attackStep);
-      }
-    }
-
-    @Override
-    public double localTtc() {
-      return ttcHashMap.get("Database.createUserInfo");
-    }
-  }
-
   public class ReadUserInfo extends AttackStepMin {
     private Set<AttackStep> _cacheChildrenReadUserInfo;
 
@@ -162,90 +108,6 @@ public class Database extends Asset {
     @Override
     public double localTtc() {
       return ttcHashMap.get("Database.readUserInfo");
-    }
-  }
-
-  public class ModifyUserInfo extends AttackStepMin {
-    private Set<AttackStep> _cacheChildrenModifyUserInfo;
-
-    private Set<AttackStep> _cacheParentModifyUserInfo;
-
-    public ModifyUserInfo(String name) {
-      super(name);
-    }
-
-    @Override
-    public void updateChildren(Set<AttackStep> attackSteps) {
-      if (_cacheChildrenModifyUserInfo == null) {
-        _cacheChildrenModifyUserInfo = new HashSet<>();
-        for (Credentials _0 : credentials) {
-          _cacheChildrenModifyUserInfo.add(_0.modifyCredentials);
-        }
-      }
-      for (AttackStep attackStep : _cacheChildrenModifyUserInfo) {
-        attackStep.updateTtc(this, ttc, attackSteps);
-      }
-    }
-
-    @Override
-    public void setExpectedParents() {
-      super.setExpectedParents();
-      if (_cacheParentModifyUserInfo == null) {
-        _cacheParentModifyUserInfo = new HashSet<>();
-        if (dbms != null) {
-          _cacheParentModifyUserInfo.add(dbms.update);
-        }
-      }
-      for (AttackStep attackStep : _cacheParentModifyUserInfo) {
-        addExpectedParent(attackStep);
-      }
-    }
-
-    @Override
-    public double localTtc() {
-      return ttcHashMap.get("Database.modifyUserInfo");
-    }
-  }
-
-  public class DeleteUserInfo extends AttackStepMin {
-    private Set<AttackStep> _cacheChildrenDeleteUserInfo;
-
-    private Set<AttackStep> _cacheParentDeleteUserInfo;
-
-    public DeleteUserInfo(String name) {
-      super(name);
-    }
-
-    @Override
-    public void updateChildren(Set<AttackStep> attackSteps) {
-      if (_cacheChildrenDeleteUserInfo == null) {
-        _cacheChildrenDeleteUserInfo = new HashSet<>();
-        for (Credentials _0 : credentials) {
-          _cacheChildrenDeleteUserInfo.add(_0.removeCredentials);
-        }
-      }
-      for (AttackStep attackStep : _cacheChildrenDeleteUserInfo) {
-        attackStep.updateTtc(this, ttc, attackSteps);
-      }
-    }
-
-    @Override
-    public void setExpectedParents() {
-      super.setExpectedParents();
-      if (_cacheParentDeleteUserInfo == null) {
-        _cacheParentDeleteUserInfo = new HashSet<>();
-        if (dbms != null) {
-          _cacheParentDeleteUserInfo.add(dbms.delete);
-        }
-      }
-      for (AttackStep attackStep : _cacheParentDeleteUserInfo) {
-        addExpectedParent(attackStep);
-      }
-    }
-
-    @Override
-    public double localTtc() {
-      return ttcHashMap.get("Database.deleteUserInfo");
     }
   }
 }

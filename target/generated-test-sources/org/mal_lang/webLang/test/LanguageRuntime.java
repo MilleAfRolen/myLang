@@ -9,13 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class LanguageRuntime extends Asset {
-  public PostRequest postRequest;
-
   public GetRequest getRequest;
-
-  public PutRequest putRequest;
-
-  public DeleteRequest deleteRequest;
 
   public WebServer webserver = null;
 
@@ -24,14 +18,8 @@ public class LanguageRuntime extends Asset {
   public LanguageRuntime(String name) {
     super(name);
     assetClassName = "LanguageRuntime";
-    AttackStep.allAttackSteps.remove(postRequest);
-    postRequest = new PostRequest(name);
     AttackStep.allAttackSteps.remove(getRequest);
     getRequest = new GetRequest(name);
-    AttackStep.allAttackSteps.remove(putRequest);
-    putRequest = new PutRequest(name);
-    AttackStep.allAttackSteps.remove(deleteRequest);
-    deleteRequest = new DeleteRequest(name);
   }
 
   public LanguageRuntime() {
@@ -85,32 +73,6 @@ public class LanguageRuntime extends Asset {
     return assets;
   }
 
-  public class PostRequest extends AttackStepMin {
-    private Set<AttackStep> _cacheChildrenPostRequest;
-
-    public PostRequest(String name) {
-      super(name);
-    }
-
-    @Override
-    public void updateChildren(Set<AttackStep> attackSteps) {
-      if (_cacheChildrenPostRequest == null) {
-        _cacheChildrenPostRequest = new HashSet<>();
-        if (dbms != null) {
-          _cacheChildrenPostRequest.add(dbms.create);
-        }
-      }
-      for (AttackStep attackStep : _cacheChildrenPostRequest) {
-        attackStep.updateTtc(this, ttc, attackSteps);
-      }
-    }
-
-    @Override
-    public double localTtc() {
-      return ttcHashMap.get("LanguageRuntime.postRequest");
-    }
-  }
-
   public class GetRequest extends AttackStepMin {
     private Set<AttackStep> _cacheChildrenGetRequest;
 
@@ -153,58 +115,6 @@ public class LanguageRuntime extends Asset {
     @Override
     public double localTtc() {
       return ttcHashMap.get("LanguageRuntime.getRequest");
-    }
-  }
-
-  public class PutRequest extends AttackStepMin {
-    private Set<AttackStep> _cacheChildrenPutRequest;
-
-    public PutRequest(String name) {
-      super(name);
-    }
-
-    @Override
-    public void updateChildren(Set<AttackStep> attackSteps) {
-      if (_cacheChildrenPutRequest == null) {
-        _cacheChildrenPutRequest = new HashSet<>();
-        if (dbms != null) {
-          _cacheChildrenPutRequest.add(dbms.update);
-        }
-      }
-      for (AttackStep attackStep : _cacheChildrenPutRequest) {
-        attackStep.updateTtc(this, ttc, attackSteps);
-      }
-    }
-
-    @Override
-    public double localTtc() {
-      return ttcHashMap.get("LanguageRuntime.putRequest");
-    }
-  }
-
-  public class DeleteRequest extends AttackStepMin {
-    private Set<AttackStep> _cacheChildrenDeleteRequest;
-
-    public DeleteRequest(String name) {
-      super(name);
-    }
-
-    @Override
-    public void updateChildren(Set<AttackStep> attackSteps) {
-      if (_cacheChildrenDeleteRequest == null) {
-        _cacheChildrenDeleteRequest = new HashSet<>();
-        if (dbms != null) {
-          _cacheChildrenDeleteRequest.add(dbms.delete);
-        }
-      }
-      for (AttackStep attackStep : _cacheChildrenDeleteRequest) {
-        attackStep.updateTtc(this, ttc, attackSteps);
-      }
-    }
-
-    @Override
-    public double localTtc() {
-      return ttcHashMap.get("LanguageRuntime.deleteRequest");
     }
   }
 }

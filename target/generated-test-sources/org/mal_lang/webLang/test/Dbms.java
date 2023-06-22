@@ -9,13 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Dbms extends Asset {
-  public Create create;
-
   public Read read;
-
-  public Update update;
-
-  public Delete delete;
 
   public LanguageRuntime runtime = null;
 
@@ -24,14 +18,8 @@ public class Dbms extends Asset {
   public Dbms(String name) {
     super(name);
     assetClassName = "Dbms";
-    AttackStep.allAttackSteps.remove(create);
-    create = new Create(name);
     AttackStep.allAttackSteps.remove(read);
     read = new Read(name);
-    AttackStep.allAttackSteps.remove(update);
-    update = new Update(name);
-    AttackStep.allAttackSteps.remove(delete);
-    delete = new Delete(name);
   }
 
   public Dbms() {
@@ -81,48 +69,6 @@ public class Dbms extends Asset {
     return assets;
   }
 
-  public class Create extends AttackStepMin {
-    private Set<AttackStep> _cacheChildrenCreate;
-
-    private Set<AttackStep> _cacheParentCreate;
-
-    public Create(String name) {
-      super(name);
-    }
-
-    @Override
-    public void updateChildren(Set<AttackStep> attackSteps) {
-      if (_cacheChildrenCreate == null) {
-        _cacheChildrenCreate = new HashSet<>();
-        for (Database _0 : database) {
-          _cacheChildrenCreate.add(_0.createUserInfo);
-        }
-      }
-      for (AttackStep attackStep : _cacheChildrenCreate) {
-        attackStep.updateTtc(this, ttc, attackSteps);
-      }
-    }
-
-    @Override
-    public void setExpectedParents() {
-      super.setExpectedParents();
-      if (_cacheParentCreate == null) {
-        _cacheParentCreate = new HashSet<>();
-        if (runtime != null) {
-          _cacheParentCreate.add(runtime.postRequest);
-        }
-      }
-      for (AttackStep attackStep : _cacheParentCreate) {
-        addExpectedParent(attackStep);
-      }
-    }
-
-    @Override
-    public double localTtc() {
-      return ttcHashMap.get("Dbms.create");
-    }
-  }
-
   public class Read extends AttackStepMin {
     private Set<AttackStep> _cacheChildrenRead;
 
@@ -162,90 +108,6 @@ public class Dbms extends Asset {
     @Override
     public double localTtc() {
       return ttcHashMap.get("Dbms.read");
-    }
-  }
-
-  public class Update extends AttackStepMin {
-    private Set<AttackStep> _cacheChildrenUpdate;
-
-    private Set<AttackStep> _cacheParentUpdate;
-
-    public Update(String name) {
-      super(name);
-    }
-
-    @Override
-    public void updateChildren(Set<AttackStep> attackSteps) {
-      if (_cacheChildrenUpdate == null) {
-        _cacheChildrenUpdate = new HashSet<>();
-        for (Database _0 : database) {
-          _cacheChildrenUpdate.add(_0.modifyUserInfo);
-        }
-      }
-      for (AttackStep attackStep : _cacheChildrenUpdate) {
-        attackStep.updateTtc(this, ttc, attackSteps);
-      }
-    }
-
-    @Override
-    public void setExpectedParents() {
-      super.setExpectedParents();
-      if (_cacheParentUpdate == null) {
-        _cacheParentUpdate = new HashSet<>();
-        if (runtime != null) {
-          _cacheParentUpdate.add(runtime.putRequest);
-        }
-      }
-      for (AttackStep attackStep : _cacheParentUpdate) {
-        addExpectedParent(attackStep);
-      }
-    }
-
-    @Override
-    public double localTtc() {
-      return ttcHashMap.get("Dbms.update");
-    }
-  }
-
-  public class Delete extends AttackStepMin {
-    private Set<AttackStep> _cacheChildrenDelete;
-
-    private Set<AttackStep> _cacheParentDelete;
-
-    public Delete(String name) {
-      super(name);
-    }
-
-    @Override
-    public void updateChildren(Set<AttackStep> attackSteps) {
-      if (_cacheChildrenDelete == null) {
-        _cacheChildrenDelete = new HashSet<>();
-        for (Database _0 : database) {
-          _cacheChildrenDelete.add(_0.deleteUserInfo);
-        }
-      }
-      for (AttackStep attackStep : _cacheChildrenDelete) {
-        attackStep.updateTtc(this, ttc, attackSteps);
-      }
-    }
-
-    @Override
-    public void setExpectedParents() {
-      super.setExpectedParents();
-      if (_cacheParentDelete == null) {
-        _cacheParentDelete = new HashSet<>();
-        if (runtime != null) {
-          _cacheParentDelete.add(runtime.deleteRequest);
-        }
-      }
-      for (AttackStep attackStep : _cacheParentDelete) {
-        addExpectedParent(attackStep);
-      }
-    }
-
-    @Override
-    public double localTtc() {
-      return ttcHashMap.get("Dbms.delete");
     }
   }
 }

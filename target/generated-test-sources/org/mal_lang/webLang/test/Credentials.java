@@ -9,13 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Credentials extends Asset {
-  public CreateCredentials createCredentials;
-
   public ReadCredentials readCredentials;
-
-  public RemoveCredentials removeCredentials;
-
-  public ModifyCredentials modifyCredentials;
 
   public Account account = null;
 
@@ -24,14 +18,8 @@ public class Credentials extends Asset {
   public Credentials(String name) {
     super(name);
     assetClassName = "Credentials";
-    AttackStep.allAttackSteps.remove(createCredentials);
-    createCredentials = new CreateCredentials(name);
     AttackStep.allAttackSteps.remove(readCredentials);
     readCredentials = new ReadCredentials(name);
-    AttackStep.allAttackSteps.remove(removeCredentials);
-    removeCredentials = new RemoveCredentials(name);
-    AttackStep.allAttackSteps.remove(modifyCredentials);
-    modifyCredentials = new ModifyCredentials(name);
   }
 
   public Credentials() {
@@ -85,33 +73,6 @@ public class Credentials extends Asset {
     return assets;
   }
 
-  public class CreateCredentials extends AttackStepMin {
-    private Set<AttackStep> _cacheParentCreateCredentials;
-
-    public CreateCredentials(String name) {
-      super(name);
-    }
-
-    @Override
-    public void setExpectedParents() {
-      super.setExpectedParents();
-      if (_cacheParentCreateCredentials == null) {
-        _cacheParentCreateCredentials = new HashSet<>();
-        if (database != null) {
-          _cacheParentCreateCredentials.add(database.createUserInfo);
-        }
-      }
-      for (AttackStep attackStep : _cacheParentCreateCredentials) {
-        addExpectedParent(attackStep);
-      }
-    }
-
-    @Override
-    public double localTtc() {
-      return ttcHashMap.get("Credentials.createCredentials");
-    }
-  }
-
   public class ReadCredentials extends AttackStepMin {
     private Set<AttackStep> _cacheChildrenReadCredentials;
 
@@ -151,60 +112,6 @@ public class Credentials extends Asset {
     @Override
     public double localTtc() {
       return ttcHashMap.get("Credentials.readCredentials");
-    }
-  }
-
-  public class RemoveCredentials extends AttackStepMin {
-    private Set<AttackStep> _cacheParentRemoveCredentials;
-
-    public RemoveCredentials(String name) {
-      super(name);
-    }
-
-    @Override
-    public void setExpectedParents() {
-      super.setExpectedParents();
-      if (_cacheParentRemoveCredentials == null) {
-        _cacheParentRemoveCredentials = new HashSet<>();
-        if (database != null) {
-          _cacheParentRemoveCredentials.add(database.deleteUserInfo);
-        }
-      }
-      for (AttackStep attackStep : _cacheParentRemoveCredentials) {
-        addExpectedParent(attackStep);
-      }
-    }
-
-    @Override
-    public double localTtc() {
-      return ttcHashMap.get("Credentials.removeCredentials");
-    }
-  }
-
-  public class ModifyCredentials extends AttackStepMin {
-    private Set<AttackStep> _cacheParentModifyCredentials;
-
-    public ModifyCredentials(String name) {
-      super(name);
-    }
-
-    @Override
-    public void setExpectedParents() {
-      super.setExpectedParents();
-      if (_cacheParentModifyCredentials == null) {
-        _cacheParentModifyCredentials = new HashSet<>();
-        if (database != null) {
-          _cacheParentModifyCredentials.add(database.modifyUserInfo);
-        }
-      }
-      for (AttackStep attackStep : _cacheParentModifyCredentials) {
-        addExpectedParent(attackStep);
-      }
-    }
-
-    @Override
-    public double localTtc() {
-      return ttcHashMap.get("Credentials.modifyCredentials");
     }
   }
 }
